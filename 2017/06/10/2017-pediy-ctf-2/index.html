@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          2017看雪CTF leifeiCM - H0rs3fa11&#39;s blog
+        
+    </title>
+
+    <link rel="canonical" href="https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#reverse" title="reverse">reverse</a>
+                            
+                              <a class="tag" href="/tags/#ctf" title="ctf">ctf</a>
+                            
+                        </div>
+                        <h1>2017看雪CTF leifeiCM</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by h0rs3fa11 on
+                            2017-06-10
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">H0rs3fa11&#39;s blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试<br><a id="more"></a></p>
+<h2 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">0040104E  |.  E8 7D0A0000   call    00401AD0                         ;  input</span><br><span class="line">00401053  |.  8D7C24 20     lea     edi, dword ptr [esp+20]</span><br><span class="line">00401057  |.  83C9 FF       or      ecx, FFFFFFFF</span><br><span class="line">0040105A  |.  33C0          xor     eax, eax</span><br><span class="line">0040105C  |.  83C4 18       add     esp, 18</span><br><span class="line">0040105F  |.  F2:AE         repne   scas byte ptr es:[edi]</span><br><span class="line">00401061  |.  F7D1          not     ecx</span><br><span class="line">00401063  |.  83C1 FE       add     ecx, -2</span><br><span class="line">00401066  |.  83F9 08       cmp     ecx, 8                           ;  &gt;=8</span><br><span class="line">00401069  |.  0F8C 0B020000 jl      0040127A</span><br><span class="line">0040106F  |.  83F9 14       cmp     ecx, 14                          ;  &lt;=20</span><br><span class="line">00401072  |.  0F8F 02020000 jg      0040127A</span><br><span class="line">00401078  |.  33F6          xor     esi, esi</span><br><span class="line">0040107A  |.  33D2          xor     edx, edx</span><br><span class="line">0040107C  |.  85C9          test    ecx, ecx</span><br><span class="line">0040107E  |.  88440C 08     mov     byte ptr [esp+ecx+8], al</span><br><span class="line">00401082  |.  7E 28         jle     short 004010AC</span><br></pre></td></tr></table></figure>
+<p>长度在8~20之间<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">00401084  |&gt; /8A4414 08     /mov     al, byte ptr [esp+edx+8]</span><br><span class="line">00401088  |. |3C 30         |cmp     al, 30</span><br><span class="line">0040108A  |. |7E 04         |jle     short 00401090</span><br><span class="line">0040108C  |. |3C 39         |cmp     al, 39</span><br><span class="line">0040108E  |. |7E 01         |jle     short 00401091</span><br><span class="line">00401090  |&gt; |46            |inc     esi</span><br><span class="line">00401091  |&gt; |42            |inc     edx</span><br><span class="line">00401092  |. |3BD1          |cmp     edx, ecx</span><br><span class="line">00401094  |.^\7C EE         \jl      short 00401084</span><br><span class="line">00401096  |.  85F6          test    esi, esi</span><br><span class="line">00401098  |.  74 12         je      short 004010AC</span><br><span class="line">0040109A  |.  68 74904000   push    00409074                         ;  key format error...\n</span><br><span class="line">0040109F  |.  E8 3C0B0000   call    00401BE0</span><br></pre></td></tr></table></figure></p>
+<p>全是数字，并且不为0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">004010AC  |&gt; \8D8C24 0C0100&gt;lea     ecx, dword ptr [esp+10C]</span><br><span class="line">004010B3  |.  E8 08020000   call    004012C0                         ;  初始化</span><br></pre></td></tr></table></figure></p>
+<p>初始化一个对象<br>继续往下，跟进4014E0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">004014FF  |. /7E 2E         jle     short 0040152F                   ;  &lt;=</span><br><span class="line">00401501  |&gt; |8A042E        /mov     al, byte ptr [esi+ebp]</span><br><span class="line">00401504  |. |3C 30         |cmp     al, 30</span><br><span class="line">00401506  |. |7C 22         |jl      short 0040152A</span><br><span class="line">00401508  |. |3C 39         |cmp     al, 39</span><br><span class="line">0040150A  |. |7F 1E         |jg      short 0040152A</span><br><span class="line">0040150C  |. |0FBEC0        |movsx   eax, al</span><br><span class="line">0040150F  |. |83E8 30       |sub     eax, 30                         ;  转十进制</span><br><span class="line">00401512  |. |74 16         |je      short 0040152A</span><br><span class="line">00401514  |. |85F6          |test    esi, esi</span><br><span class="line">00401516  |. |74 0A         |je      short 00401522</span><br><span class="line">00401518  |. |8BCE          |mov     ecx, esi</span><br><span class="line">0040151A  |&gt; |8D0480        |/lea     eax, dword ptr [eax+eax*4]     ;  eax*10</span><br><span class="line">0040151D  |. |03C0          ||add     eax, eax</span><br><span class="line">0040151F  |. |49            ||dec     ecx</span><br><span class="line">00401520  |.^|75 F8         |\jnz     short 0040151A</span><br><span class="line">00401522     |50            push    eax</span><br><span class="line">00401523  |. |8BCB          |mov     ecx, ebx</span><br><span class="line">00401525  |. |E8 56000000   |call    00401580</span><br><span class="line">0040152A  |&gt; |46            |inc     esi</span><br><span class="line">0040152B  |. |3BF7          |cmp     esi, edi</span><br><span class="line">0040152D  |.^|7C D2         \jl      short 00401501</span><br><span class="line">0040152F  |&gt; \8BCB          mov     ecx, ebx</span><br><span class="line">00401531  |.  E8 3A040000   call    00401970                         ;  检查位数</span><br></pre></td></tr></table></figure></p>
+<p>转十进制数<br>运行到call 401730,跟进<br>F8单步走，之前的call就大致浏览一下，运行到call 401540，跟进去看看<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">00401540  /$  56            push    esi</span><br><span class="line">00401541  |.  8B7424 08     mov     esi, dword ptr [esp+8]</span><br><span class="line">00401545  |.  33D2          xor     edx, edx</span><br><span class="line">00401547  |.  8B46 04       mov     eax, dword ptr [esi+4]           ;  读取长度</span><br><span class="line">0040154A  |.  85C0          test    eax, eax</span><br><span class="line">0040154C  |.  8941 04       mov     dword ptr [ecx+4], eax</span><br><span class="line">0040154F  |.  7E 28         jle     short 00401579</span><br><span class="line">00401551  |.  53            push    ebx</span><br><span class="line">00401552  |.  55            push    ebp</span><br><span class="line">00401553  |.  57            push    edi</span><br><span class="line">00401554  |.  8BFE          mov     edi, esi</span><br><span class="line">00401556  |.  8D81 08100000 lea     eax, dword ptr [ecx+1008]</span><br><span class="line">0040155C  |.  2BF9          sub     edi, ecx</span><br><span class="line">0040155E  |&gt;  8B1C07        /mov     ebx, dword ptr [edi+eax]</span><br><span class="line">00401561  |.  8B28          |mov     ebp, dword ptr [eax]</span><br><span class="line">00401563  |.  42            |inc     edx</span><br><span class="line">00401564  |.  83C0 04       |add     eax, 4</span><br><span class="line">00401567 &gt;|.  8B5C9E 08     |mov     ebx, dword ptr [esi+ebx*4+8]    ;  读取数字</span><br><span class="line">0040156B &gt;|.  895CA9 08     |mov     dword ptr [ecx+ebp*4+8], ebx</span><br><span class="line">0040156F  |.  8B59 04       |mov     ebx, dword ptr [ecx+4]</span><br><span class="line">00401572  |.  3BD3          |cmp     edx, ebx</span><br><span class="line">00401574  |.^ 7C E8         \jl      short 0040155E</span><br><span class="line">00401576  |.  5F            pop     edi</span><br><span class="line">00401577  |.  5D            pop     ebp</span><br><span class="line">00401578  |.  5B            pop     ebx</span><br><span class="line">00401579  |&gt;  5E            pop     esi</span><br><span class="line">0040157A  \.  C2 0400       retn    4</span><br></pre></td></tr></table></figure></p>
+<p>这里会读取我们输入的数字，而且通过ida交叉引用可知后面还会调用几次这个读取的过程，于是可以设置一个条件断点记录这里读取的值。<br>在00401567记录<br><img src="/image/leifeicm1.png" alt=""><br>在40156B记录<br><img src="/image/leifeicm2.png" alt=""><br><img src="/image/leifeicm3.png" alt=""><br>然后在retn的地方下个断点，直接运行过去<br>打开Log窗口（之前已经清空）<br><img src="/image/leifeicm4.png" alt=""><br>可以看到读取输入数字的过程<br>接下来继续单步运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0040179C          |.  E8 9FFDFFFF   |call    00401540                        ;  读取</span><br><span class="line">004017A1          |.  57            |push    edi</span><br><span class="line">004017A2          |.  8D4C24 14     |lea     ecx, dword ptr [esp+14]</span><br><span class="line">004017A6          |.  E8 B5FEFFFF   |call    00401660</span><br><span class="line">004017AB          |.  56            |push    esi</span><br><span class="line">004017AC          |.  8D4C24 14     |lea     ecx, dword ptr [esp+14]</span><br><span class="line">004017B0          |.  E8 2BFFFFFF   |call    004016E0                        ;  乘法 num</span><br></pre></td></tr></table></figure></p>
+<p>跟进004017B0 call 004016E0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">004016FF          |&gt; /8B06          /mov     eax, dword ptr [esi]</span><br><span class="line">00401701          |. |83C6 04       |add     esi, 4</span><br><span class="line">00401704          |. |8B5C81 08     |mov     ebx, dword ptr [ecx+eax*4+8]</span><br><span class="line">00401708 x        |. |8D4481 08     |lea     eax, dword ptr [ecx+eax*4+8]</span><br><span class="line">0040170C y        |. |0FAFDF        |imul    ebx, edi                        ;  9*num</span><br><span class="line">0040170F x*y      |. |8918          |mov     dword ptr [eax], ebx</span><br><span class="line">00401711          |. |8B41 04       |mov     eax, dword ptr [ecx+4]</span><br><span class="line">00401714          |. |42            |inc     edx</span><br><span class="line">00401715          |. |3BD0          |cmp     edx, eax</span><br><span class="line">00401717          |.^\7C E6         \jl      short 004016FF</span><br></pre></td></tr></table></figure></p>
+<p>这里是一个乘法的实现，并且之后还会调用。这里是之前传入的参数9分别乘上输入的数字，同样设置条件记录一下<br><img src="/image/leifeicm5.png" alt=""><br>00401708记录ebx，0040170C记录edi，0040170F记录ebx<br>在0040171B设置断点，运行跳过循环，记录内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">00401708  COND: x = 00000009</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000051</span><br><span class="line">00401708  COND: x = 00000008</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000048</span><br><span class="line">00401708  COND: x = 00000007</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 0000003F</span><br><span class="line">00401708  COND: x = 00000006</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000036</span><br><span class="line">00401708  COND: x = 00000005</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 0000002D</span><br><span class="line">00401708  COND: x = 00000004</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000024</span><br><span class="line">00401708  COND: x = 00000003</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 0000001B</span><br><span class="line">00401708  COND: x = 00000002</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000012</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">0040171B  断点位于 2-lelfei.0040171B</span><br></pre></td></tr></table></figure></p>
+<p>然后进入0040171B的这个call看看<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">00401719          |.  5E            pop     esi</span><br><span class="line">0040171A          |.  5B            pop     ebx</span><br><span class="line">0040171B          |&gt;  E8 50020000   call    00401970                         ;  123...9*9=111....1 完成进位</span><br><span class="line">00401720          |.  33C0          xor     eax, eax</span><br><span class="line">00401722          |.  5F            pop     edi</span><br><span class="line">00401723          |.  C2 0400       retn    4</span><br></pre></td></tr></table></figure></p>
+<p>进去之后可以看到有一个除法取余的操作，同样可以设置条件断点跟踪一下<br><img src="/image/leifeicm6.png" alt=""><br>分别记录eax、edx的值<br>运行过后记录如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">004019BE  COND: eax = 00000051</span><br><span class="line">004019C0  COND: eax mod 10 = 00000001</span><br><span class="line">004019BE  COND: eax = 00000050</span><br><span class="line">004019C0  COND: eax mod 10 = 00000000</span><br><span class="line">004019BE  COND: eax = 00000047</span><br><span class="line">004019C0  COND: eax mod 10 = 00000001</span><br><span class="line">004019BE  COND: eax = 0000003D</span><br><span class="line">004019C0  COND: eax mod 10 = 00000001</span><br><span class="line">004019BE  COND: eax = 00000033</span><br><span class="line">004019C0  COND: eax mod 10 = 00000001</span><br><span class="line">004019BE  COND: eax = 00000029</span><br><span class="line">004019C0  COND: eax mod 10 = 00000001</span><br><span class="line">004019BE  COND: eax = 0000001F</span><br><span class="line">004019C0  COND: eax mod 10 = 00000001</span><br></pre></td></tr></table></figure></p>
+<p>这里得分析一下，刚开始eax=0x51=81，通过之前的记录这个值就是99的值；然后eax=0x50，这个值即为89+8=0x50，加上的这个8就是99的进位，再分析几个就能知道，刚才那个call分别让输入的数字乘9，而这里则完成了进位，<strong>实现的就是1234567899的操作</strong>。这个call在加法中也会用于进位。</p>
+<p>出来之后下面是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">004017C1          |.  E8 1AFEFFFF   |call    004015E0                        ;  +</span><br><span class="line">跟进去看一下</span><br><span class="line">00401634          |.  8B10          |mov     edx, dword ptr [eax]</span><br><span class="line">00401636          |.  8B2C07        |mov     ebp, dword ptr [edi+eax]</span><br><span class="line">00401639          |.  8B6CAE 08     |mov     ebp, dword ptr [esi+ebp*4+8]</span><br><span class="line">0040163D a        |.  8D5491 08     |lea     edx, dword ptr [ecx+edx*4+8]</span><br><span class="line">00401641 b        |.  012A          |add     dword ptr [edx], ebp            ;  加法</span><br><span class="line">00401643 edx&gt;400  |&gt;  8B5424 10     |mov     edx, dword ptr [esp+10]</span><br><span class="line">00401647          |.  43            |inc     ebx</span><br><span class="line">00401648          |.  83C0 04       |add     eax, 4</span><br><span class="line">0040164B          |.  3BDA          |cmp     ebx, edx</span><br><span class="line">0040164D          |.^ 7C BE         \jl      short 0040160D</span><br><span class="line">0040164F          |.  5F            pop     edi</span><br><span class="line">00401650          |.  5D            pop     ebp</span><br><span class="line">00401651          |&gt;  E8 1A030000   call    00401970</span><br><span class="line">00401656          |.  5E            pop     esi</span><br><span class="line">00401657          |.  5B            pop     ebx</span><br><span class="line">00401658          |.  59            pop     ecx</span><br><span class="line">00401659          \.  C2 0400       retn    4</span><br></pre></td></tr></table></figure></p>
+<p>这里有一个加法的操作，而且同样后面还会调用（经过跟踪这里暂时不会调用加法），于是还是设置一个条件记录断点<br>分别记录ebp、dword ptr [edx]、条件edx&gt;400的dword ptr [edx]，然后运行到retn<br>此时记录窗口暂时未记下有用的记录<br>然后继续直接运行到retn<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">0401567  COND: adress = 0012CDD0</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012C9C8</span><br><span class="line">0040156B  COND: value = 00000000</span><br><span class="line">00401567  COND: adress = 0012C530</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012C0B4</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012C044</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012C664</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012CB20</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012CAB8</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012C764</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012CF58</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">0040181E  断点位于 2-lelfei.0040181E</span><br></pre></td></tr></table></figure></p>
+<p>可见读取了1234567899的结果，然后call 401730就分析完了，作用就是1234567899=1111111101<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">004010E9          |.  E8 42060000   call    00401730                         ;  123456789*9=1111111101</span><br><span class="line">004010EE          |.  8D8C24 0C0100&gt;lea     ecx, dword ptr [esp+10C]</span><br><span class="line">004010F5          |.  E8 B6010000   call    004012B0                         ;  nothing</span><br><span class="line">004010FA          |&gt;  8D5424 08     /lea     edx, dword ptr [esp+8]</span><br><span class="line">004010FE          |.  8D8C24 1C2100&gt;|lea     ecx, dword ptr [esp+211C]</span><br><span class="line">00401105          |.  52            |push    edx</span><br><span class="line">00401106          |.  E8 45020000   |call    00401350</span><br><span class="line">0040110B          |.  8D8424 1C2100&gt;|lea     eax, dword ptr [esp+211C]</span><br><span class="line">00401112          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]</span><br><span class="line">00401119          |.  50            |push    eax</span><br><span class="line">0040111A          |.  C68424 384100&gt;|mov     byte ptr [esp+4138], 1</span><br><span class="line">00401122          |.  E8 19070000   |call    00401840</span><br><span class="line">00401127          |.  6A 09         |push    9</span><br><span class="line">00401129          |.  8D8C24 100100&gt;|lea     ecx, dword ptr [esp+110]</span><br><span class="line">00401130          |.  8BF0          |mov     esi, eax</span><br><span class="line">00401132          |.  E8 F9050000   |call    00401730</span><br><span class="line">00401137          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]</span><br><span class="line">0040113E          |.  03F0          |add     esi, eax</span><br><span class="line">00401140          |.  E8 6B010000   |call    004012B0</span><br><span class="line">00401145          |.  85F6          |test    esi, esi</span><br><span class="line">00401147          |.  0F85 C8000000 |jnz     00401215</span><br><span class="line">0040114D          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]</span><br><span class="line">00401154          |.  E8 47020000   |call    004013A0</span><br><span class="line">00401159          |.  25 01000080   |and     eax, 80000001</span><br><span class="line">0040115E          |.  79 05         |jns     short 00401165</span><br></pre></td></tr></table></figure></p>
+<p>接下来的几个call可以直接通过记录窗口来分析了，在401147设置断点，运行过来，此时log窗口已经记录了很多，就从开始慢慢分析<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">00401567  COND: adress = 00128514</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001286AC</span><br><span class="line">0040156B  COND: value = 00000000</span><br><span class="line">00401567  COND: adress = 001288B8</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00128DDC</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00128D94</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001286D8</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012811C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012850C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001288B0</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012816C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124948</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124018</span><br><span class="line">0040156B  COND: value = 00000000</span><br><span class="line">00401567  COND: adress = 00124D98</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00123F28</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124540</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124420</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124CBC</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001247E8</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00123F1C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00123DE0</span><br><span class="line">0040156B  COND: value = 00000001</span><br></pre></td></tr></table></figure></p>
+<p>这里读取了 1111111101 1111111101<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000000</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000000</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000009</span><br><span class="line">0040170F  COND: x*y = 00000009</span><br></pre></td></tr></table></figure></p>
+<p>这里是1111111101*9=9999999909 (9是个位，即输入的第一位)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">00401567  COND: adress = 00128514</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 001286AC</span><br><span class="line">0040156B  COND: value = 00000000</span><br><span class="line">00401567  COND: adress = 001288B8</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 00128DDC</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 00128D94</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 001286D8</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 0012811C</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 0012850C</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 001288B0</span><br><span class="line">0040156B  COND: value = 00000009</span><br><span class="line">00401567  COND: adress = 0012816C</span><br><span class="line">0040156B  COND: value = 00000009</span><br></pre></td></tr></table></figure></p>
+<p>读取9999999909<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">00401567  COND: adress = 00128514</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001286AC</span><br><span class="line">0040156B  COND: value = 00000000</span><br><span class="line">00401567  COND: adress = 001288B8</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00128DDC</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00128D94</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001286D8</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012811C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012850C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001288B0</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012816C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124C80</span><br><span class="line">0040156B  COND: value = 00000000</span><br><span class="line">00401567  COND: adress = 00123F5C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124D08</span><br><span class="line">0040156B  COND: value = 00000000</span><br><span class="line">00401567  COND: adress = 00123E70</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124858</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124BF4</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00124608</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012453C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 001241A0</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 0012497C</span><br><span class="line">0040156B  COND: value = 00000001</span><br><span class="line">00401567  COND: adress = 00123E84</span><br><span class="line">0040156B  COND: value = 00000001</span><br></pre></td></tr></table></figure></p>
+<p>读取11111111010 1111111101<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">00401708  COND: x = 00000000</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000000</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000000</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000000</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000008</span><br><span class="line">0040170F  COND: x*y = 00000008</span><br></pre></td></tr></table></figure></p>
+<p>11111111010*8=88888888080<br>这里8是输入的第二位</p>
+<p>(省略记录文件)<br>接下来读取88888888080<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">0040163D  COND: a = 00000000</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000009</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000000</span><br><span class="line">00401643  COND: a+b = 00000008</span><br><span class="line">0040163D  COND: a = 00000000</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000009</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000011</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000011</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000011</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000011</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000011</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000011</span><br><span class="line">0040163D  COND: a = 00000008</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000011</span><br></pre></td></tr></table></figure></p>
+<p>加法出现(省略进位的记录文件)，88888888080+9999999909=9888 8887 989</p>
+<p>然后读取111111110100<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">00401708  COND: x = 00000000</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000000</span><br><span class="line">00401708  COND: x = 00000000</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000000</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000000</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000000</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br><span class="line">00401708  COND: x = 00000001</span><br><span class="line">0040170C  COND: y = 00000007</span><br><span class="line">0040170F  COND: x*y = 00000007</span><br></pre></td></tr></table></figure></p>
+<p>111111110100*7=777777770700<br>7百位，即是输入的第3位<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">0040163D  COND: a = 00000000</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000009</span><br><span class="line">0040163D  COND: a = 00000000</span><br><span class="line">00401641  COND: b = 00000008</span><br><span class="line">00401643  COND: a+b = 00000008</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000010</span><br><span class="line">0040163D  COND: a = 00000000</span><br><span class="line">00401641  COND: b = 00000007</span><br><span class="line">00401643  COND: a+b = 00000007</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000008</span><br><span class="line">00401643  COND: a+b = 0000000F</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000008</span><br><span class="line">00401643  COND: a+b = 0000000F</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000008</span><br><span class="line">00401643  COND: a+b = 0000000F</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000008</span><br><span class="line">00401643  COND: a+b = 0000000F</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000008</span><br><span class="line">00401643  COND: a+b = 0000000F</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000008</span><br><span class="line">00401643  COND: a+b = 0000000F</span><br><span class="line">0040163D  COND: a = 00000007</span><br><span class="line">00401641  COND: b = 00000009</span><br><span class="line">00401643  COND: a+b = 00000010</span><br></pre></td></tr></table></figure></p>
+<p>9888 8887 989 + 7777 7777 0700 = 8766 6665 8689</p>
+<p>接下来<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1111111101000 * 6 = 6666666606000  6是千位，输入的第4位</span><br><span class="line">8766 6665 8689 + 6666666606000 = 7543 3332 64689</span><br><span class="line">11111111010000 * 5 = 55555555050000 5是万位，输入的第5位</span><br><span class="line">7543 3332 64689 + 55555555050000 = 63098888314689</span><br><span class="line">111111110100000 * 4 = 444444440400000  4是输入的第6位</span><br><span class="line">63098888314689 + 444444440400000 = 507543328714689</span><br><span class="line">1111111101000000 * 3 = 3333333303000000  3是输入的第7位</span><br><span class="line">507543328714689 + 3333333303000000 = 3840876631714689</span><br><span class="line">11111111010000000*2 = 22222222020000000</span><br><span class="line">3840876631714689 + 22222222020000000 = 26063098651714689</span><br><span class="line">111111110100000000*1=111111110100000000</span><br><span class="line">26063098651714689 + 111111110100000000 = 137174208751714689</span><br><span class="line">137174208751714689 * 9 = 1234567878765432201</span><br></pre></td></tr></table></figure></p>
+<p>算到这里过后，接下来就是关键的比较了</p>
+<p>比较<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">00401154          |.  E8 47020000   |call    004013A0                        ;  获取计算后的长度</span><br><span class="line">00401159          |.  25 01000080   |and     eax, 80000001</span><br><span class="line">0040115E          |.  79 05         |jns     short 00401165</span><br><span class="line">00401160          |.  48            |dec     eax</span><br><span class="line">00401161          |.  83C8 FE       |or      eax, FFFFFFFE</span><br><span class="line">00401164          |.  40            |inc     eax</span><br><span class="line">00401165          |&gt;  83F8 01       |cmp     eax, 1</span><br><span class="line">00401168          |.  0F85 A7000000 |jnz     00401215</span><br></pre></td></tr></table></figure></p>
+<p>Call 004013A0由返回值eax=0x13可以知道，这里是获取计算后的长度，是0x13=19<br>长度和0x80000001做按位与，之后把返回值与1比较，不想等就跳转，这里不能跳转。<br>0x80000001按位与结果要为1，说明最低位也是1，即为奇数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0040116E          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]</span><br><span class="line">00401175          |.  E8 26020000   |call    004013A0                        ;  获取计算后长度</span><br><span class="line">0040117A          |.  D1F8          |sar     eax, 1</span><br><span class="line">0040117C          |.  50            |push    eax</span><br><span class="line">0040117D          |.  8D8C24 100100&gt;|lea     ecx, dword ptr [esp+110]</span><br><span class="line">00401184          |.  E8 27020000   |call    004013B0                        ;  结果19位，取第19/2位</span><br></pre></td></tr></table></figure></p>
+<p>Call 004013A0是获取计算后的长度，然后除以2，这里长度是19，19/2=9.<br>Call 004013B0是获取计算后的第9位，下标从0开始，这里获取到8<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">00401189          |.  6A 00         |push    0</span><br><span class="line">0040118B          |.  8D8C24 202100&gt;|lea     ecx, dword ptr [esp+2120]</span><br><span class="line">00401192          |.  8BF8          |mov     edi, eax</span><br><span class="line">00401194          |.  E8 17020000   |call    004013B0                        ;  获取用户输入的第一位（9）</span><br><span class="line">00401199          |.  3BF8          |cmp     edi, eax                        ;  比较</span><br><span class="line">0040119B          |.  8D8C24 1C2100&gt;|lea     ecx, dword ptr [esp+211C]</span><br><span class="line">004011A2          |.  75 78         |jnz     short 0040121C</span><br></pre></td></tr></table></figure></p>
+<p>上面就是计算后的第9位和输入的第一位比较。<br>这里先修改一下jnz跳转，继续看下面的比较<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">004011A4          |.  6A 00         |push    0</span><br><span class="line">004011A6          |.  E8 F5010000   |call    004013A0                             ;  用户输入的长度</span><br><span class="line">004011AB          |.  48            |dec     eax</span><br><span class="line">004011AC          |.  8D8C24 202100&gt;|lea     ecx, dword ptr [esp+2120]</span><br><span class="line">004011B3          |.  50            |push    eax</span><br><span class="line">004011B4          |.  6A 01         |push    1</span><br><span class="line">004011B6          |.  E8 E5010000   |call    004013A0                             ;  同上</span><br><span class="line">004011BB          |.  BE 01000000   |mov     esi, 1</span><br><span class="line">004011C0          |.  8D8C24 180100&gt;|lea     ecx, dword ptr [esp+118]</span><br><span class="line">004011C7          |.  2BF0          |sub     esi, eax</span><br><span class="line">004011C9          |.  E8 D2010000   |call    004013A0                             ;  计算后的长度</span><br><span class="line">004011CE          |.  03F0          |add     esi, eax</span><br><span class="line">004011D0          |.  8D8C24 282100&gt;|lea     ecx, dword ptr [esp+2128]</span><br><span class="line">004011D7          |.  56            |push    esi</span><br><span class="line">004011D8          |.  51            |push    ecx</span><br><span class="line">004011D9          |.  8D8C24 200100&gt;|lea     ecx, dword ptr [esp+120]</span><br><span class="line">004011E0          |.  E8 FB010000   |call    004013E0                             ;  比较</span><br><span class="line">004011E5          |.  6A 01         |push    1</span><br><span class="line">004011E7          |.  8D8C24 202100&gt;|lea     ecx, dword ptr [esp+2120]</span><br><span class="line">004011EE          |.  8BF0          |mov     esi, eax</span><br><span class="line">004011F0          |.  E8 AB010000   |call    004013A0</span><br><span class="line">004011F5          |.  48            |dec     eax</span><br><span class="line">004011F6          |.  8D9424 202100&gt;|lea     edx, dword ptr [esp+2120]</span><br><span class="line">004011FD          |.  50            |push    eax</span><br><span class="line">004011FE          |.  6A 01         |push    1</span><br><span class="line">00401200          |.  6A 00         |push    0</span><br><span class="line">00401202          |.  52            |push    edx</span><br><span class="line">00401203          |.  8D8C24 200100&gt;|lea     ecx, dword ptr [esp+120]</span><br><span class="line">0040120A          |.  E8 D1010000   |call    004013E0                             ;  比较</span><br><span class="line">0040120F          |.  03F0          |add     esi, eax</span><br><span class="line">00401211          |.  74 44         |je      short 00401257                       ;  关键跳转</span><br></pre></td></tr></table></figure></p>
+<p>Call 4013e0是比较的关键代码，调用了两次，同样可以记录一下每次比较的值，结果如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">0040145E  COND: a = 00000008</span><br><span class="line">00401462  COND: b = 00000008</span><br><span class="line">0040145E  COND: a = 00000007</span><br><span class="line">00401462  COND: b = 00000007</span><br><span class="line">0040145E  COND: a = 00000006</span><br><span class="line">00401462  COND: b = 00000006</span><br><span class="line">0040145E  COND: a = 00000005</span><br><span class="line">00401462  COND: b = 00000005</span><br><span class="line">0040145E  COND: a = 00000004</span><br><span class="line">00401462  COND: b = 00000004</span><br><span class="line">0040145E  COND: a = 00000003</span><br><span class="line">00401462  COND: b = 00000003</span><br><span class="line">0040145E  COND: a = 00000002</span><br><span class="line">00401462  COND: b = 00000002</span><br><span class="line">0040145E  COND: a = 00000001</span><br><span class="line">00401462  COND: b = 00000001</span><br><span class="line">0040145E  COND: a = 00000001</span><br></pre></td></tr></table></figure></p>
+<p>输入的2~9位与计算后的8~1位逐位比较<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">0040145E  COND: a = 00000001</span><br><span class="line">00401462  COND: b = 00000001</span><br><span class="line">0040145E  COND: a = 00000000</span><br><span class="line">00401462  COND: b = 00000002</span><br><span class="line">0040145E  COND: a = 00000002</span><br><span class="line">00401462  COND: b = 00000003</span><br><span class="line">0040145E  COND: a = 00000002</span><br><span class="line">00401462  COND: b = 00000004</span><br><span class="line">0040145E  COND: a = 00000003</span><br><span class="line">00401462  COND: b = 00000005</span><br><span class="line">0040145E  COND: a = 00000004</span><br><span class="line">00401462  COND: b = 00000006</span><br><span class="line">0040145E  COND: a = 00000005</span><br><span class="line">00401462  COND: b = 00000007</span><br><span class="line">0040145E  COND: a = 00000006</span><br><span class="line">00401462  COND: b = 00000008</span><br></pre></td></tr></table></figure></p>
+<p>输入的第2~9位和计算后的12~19位逐位比较</p>
+<h2 id="算法总结："><a href="#算法总结：" class="headerlink" title="算法总结："></a>算法总结：</h2><p>输入：987654321-&gt;123456789<br>运算后：12345678 787 65432201<br>中间位等于输入的第一位<br>输入的第2~9位与计算后8~1比较<br>输入的第2~9位与计算后的12~19位比较</p>
+<h2 id="算法逆向"><a href="#算法逆向" class="headerlink" title="算法逆向"></a>算法逆向</h2><p>输入是8~20位，从8位开始穷举<br>结果是97654321</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="http://bbs.pediy.com/thread-218181.htm" target="_blank" rel="noopener">链接</a></p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/10/20/hawkeye-vbinject/" data-toggle="tooltip" data-placement="top" title="负载恶意软件Hawkeye的VB Inject样本分析">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/05/25/2017-iscc-reverse/" data-toggle="tooltip" data-placement="top" title="2017 ISCC Reverse Writeup">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#reverse" title="reverse">reverse</a>
+                        
+                          <a class="tag" href="/tags/#ctf" title="ctf">ctf</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://beantech.org" target="_blank">Bean Tech</a></li>
+                    
+                        <li><a href="http://blog.kaijun.rocks" target="_blank">Kaijun&#39;s Blog</a></li>
+                    
+                        <li><a href="http://huangxuan.me" target="_blank">Hux Blog</a></li>
+                    
+                        <li><a href="#" target="_blank">It Helps SEO</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "your-disqus-ID";
+    var disqus_identifier = "https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/";
+    var disqus_url = "https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/h0rs3fa11">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; h0rs3fa11 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://h0rs3fa11.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://h0rs3fa11.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
