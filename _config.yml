@@ -159,7 +159,7 @@ markdown:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: beantech
+theme: tranquilpeak
 
 #sitemap
 sitemap:

@@ -27,41 +27,43 @@ leveldb路径为Mountpoint下的ledgersData/stateLeveldb/，然后通过leveldb�
 CAR0 {"make":"Toyota","model":"Prius","colour":"blue","owner":"Tomoko"}
 ```
 更改CAR0的colour为yellow，更改leveldb数据库时需要关闭当前节点，完毕后再启动
-![图片](https://uploader.shimo.im/f/Ob0yEFMcHWCQjOne.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric01.PNG)
 
 用API调用链码fabcar的queryCar函数查询peer0的CAR0信息
 
-![图片](https://uploader.shimo.im/f/oKLd1uerLPXGunQN.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric02.PNG)
 
 查询未篡改节点的CAR0信息
 
-![图片](https://uploader.shimo.im/f/kz3WWYHZ2hMnUCgM.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric03.PNG)
 
 在peer0上调用fabcar的changeCarOwner函数，接着查询peer0的CAR0，owner已经修改
 
-![图片](https://uploader.shimo.im/f/5lcbDYcainpc2mNW.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric04.PNG)
 
 再查询peer1的CAR0，可以看到在随着owner更改的同时，colour变为了peer0的篡改数据
 
-![图片](https://uploader.shimo.im/f/SaK19x0TdIGCGLSI.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric05.png)
 
 使用一个复杂一点的链码，实现了简单的注册、充值和转账
 
 注册一个新用户test1，初始余额为0
 
-![图片](https://uploader.shimo.im/f/07Ygfx2Ti7m6Dlms.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric06.png)
 
 修改peer0的leveldb账本，使得test1的Amount为10
 
-![图片](https://uploader.shimo.im/f/Can9taX64L3LEeil.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric07.png)
 
-调用链码函数查询peer1的test1余额![图片](https://uploader.shimo.im/f/EpI2nlHP4jovfzCb.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+调用链码函数查询peer1的test1余额!
+
+[图片](/image/fabric08.png)
 
 接下来测试被篡改节点peer0发起的交易能否修改其他账本的数据
 
 调用链码paycode函数recharge给账号test1充值20，然后查询各个节点的test1余额；peer0节点毫无悬念的是篡改后的值+20=30，通过查询可以看到peer1节点也是这个值
 
-![图片](https://uploader.shimo.im/f/LZNa8HZxO8VAdVq7.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK)
+![图片](/image/fabric09.png)
 
 通过以上测试可以发现，在节点的世界状态被篡改并且背书策略只设置为少量节点背书的话，可以很轻易的修改正常节点的账本。这涉及到Fabric中背书-验证的机制。
 
