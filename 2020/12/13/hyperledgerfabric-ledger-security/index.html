@@ -11,8 +11,9 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"articleBody":"0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。\n实验使用fabric first-network测试环境\n本文所有查询与调用合约都使用的SDK\n0x02 测试：修改世界状态测试所用链码：fabcar\n代码位置：https://github.com/hyperledger/fabric-samples/blob/release/chaincode/fabcar/fabcar.go\n测试链码的背书策略都是1-of Org1MSP，即满足Org1的任意节点背书即可\n修改账本节点：peer0.org1.example.com\nleveldb路径为Mountpoint下的ledgersData/stateLeveldb/，然后通过leveldb数据库查询账本数据(leveldb提供了API)\n1CAR0 &#123;&quot;make&quot;:&quot;Toyota&quot;,&quot;model&quot;:&quot;Prius&quot;,&quot;colour&quot;:&quot;blue&quot;,&quot;owner&quot;:&quot;Tomoko&quot;&#125;\n更改CAR0的colour为yellow，更改leveldb数据库时需要关闭当前节点，完毕后再启动\n用API调用链码fabcar的queryCar函数查询peer0的CAR0信息\n\n查询未篡改节点的CAR0信息\n\n在peer0上调用fabcar的changeCarOwner函数，接着查询peer0的CAR0，owner已经修改\n\n再查询peer1的CAR0，可以看到在随着owner更改的同时，colour变为了peer0的篡改数据\n\n使用一个复杂一点的链码，实现了简单的注册、充值和转账\n注册一个新用户test1，初始余额为0\n\n修改peer0的leveldb账本，使得test1的Amount为10\n\n调用链码函数查询peer1的test1余额!\n图片\n接下来测试被篡改节点peer0发起的交易能否修改其他账本的数据\n调用链码paycode函数recharge给账号test1充值20，然后查询各个节点的test1余额；peer0节点毫无悬念的是篡改后的值+20=30，通过查询可以看到peer1节点也是这个值\n\n通过以上测试可以发现，在节点的世界状态被篡改并且背书策略只设置为少量节点背书的话，可以很轻易的修改正常节点的账本。这涉及到Fabric中背书-验证的机制。\n0x03 交易流程当客户端要调用链码testcode，需要向多少个节点请求取决于链码的背书策略，在安装-实例化链码的实例化时指定（在2.x中，链码生命周期有所修改，链码的背书策略需要组织认可）。示例背书策略如下：\n12345678910policy = &#123;    &apos;identities&apos;: [        &#123;&apos;role&apos;: &#123;&apos;name&apos;: &apos;member&apos;, &apos;mspId&apos;: &apos;Org1MSP&apos;&#125;&#125;,    ],    &apos;policy&apos;: &#123;        &apos;1-of&apos;: [            &#123;&apos;signed-by&apos;: 0&#125;        ]    &#125;&#125;\n该背书策略仅需要Org1MSP成员的背书接下来客户端需要向peer0.org1发送背书请求(proposal)，节点peer0.org1接收到请求后会验证交易格式、签名和权限、尚未提交过背书proposal(重放攻击保护)。然后针对peer0.org1当前的世界状态模拟执行交易，产生响应值和读写集。\n客户端收到背书响应和读写集后验证peer的签名，并检查是否满足了背书策略（客户端行为可以自定义，但是交易流程中的验证阶段也会进行检查），然后将其提交给orderer，如果proposal仅是查询账本，那么到这一步后将不会再提交给orderer上链，直接返回peer0.org1的查询结果。\n排序服务中不需要检查任何交易，仅仅是各个排序节点达成共识将交易排好序后打包成块，然后分发给通道内各个组织的(leader)节点，leader节点将块再广播给其他节点验证。\n验证过程中节点验证块内的交易以确保背书策略满足，并确保读集在模拟交易执行时生成以来，读集变量的账本状态没有变化，区块中的交易被标记为有效或无效。然后区块将被写入数据库，并更新状态。\n在0x02测试中，产生这种安全漏洞的原因主要在于背书策略的不完善，容错性很差，在仅有一个恶意节点时就可能产生所有节点账本被修改的后果，Fabric的机制让其安全性依赖于背书策略，包括世界状态和读写集，以及背书和验证过程。\n0x04 Hyperledger Fabric 2.0改进Fabric 2.0引入了去中心化的chaincode生命周期管理， chaincode需要获得一定数量组织成员的批准才能实例化，与1.x中的单个节点就可将chaincode实例化在通道不一样；并且chaincode的默认背书策略是通道中的大多数组织，提高了本文所述数据篡改的利用难度。\n","dateCreated":"2020-12-13T15:55:53+08:00","dateModified":"2020-12-13T16:11:17+08:00","datePublished":"2020-12-13T15:55:53+08:00","description":"","headline":"Hyperledger Fabric世界状态的篡改","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/"},"publisher":{"@type":"Organization","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"url":"https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"articleBody":"0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。\n实验使用fabric first-network测试环境\n本文所有查询与调用合约都使用的SDK\n0x02 测试：修改世界状态测试所用链码：fabcar\n代码位置：https://github.com/hyperledger/fabric-samples/blob/release/chaincode/fabcar/fabcar.go\n测试链码的背书策略都是1-of Org1MSP，即满足Org1的任意节点背书即可\n修改账本节点：peer0.org1.example.com\nleveldb路径为Mountpoint下的ledgersData/stateLeveldb/，然后通过leveldb数据库查询账本数据(leveldb提供了API)\n1CAR0 &#123;&quot;make&quot;:&quot;Toyota&quot;,&quot;model&quot;:&quot;Prius&quot;,&quot;colour&quot;:&quot;blue&quot;,&quot;owner&quot;:&quot;Tomoko&quot;&#125;\n更改CAR0的colour为yellow，更改leveldb数据库时需要关闭当前节点，完毕后再启动\n用API调用链码fabcar的queryCar函数查询peer0的CAR0信息\n\n查询未篡改节点的CAR0信息\n\n在peer0上调用fabcar的changeCarOwner函数，接着查询peer0的CAR0，owner已经修改\n\n再查询peer1的CAR0，可以看到在随着owner更改的同时，colour变为了peer0的篡改数据\n\n使用一个复杂一点的链码，实现了简单的注册、充值和转账\n注册一个新用户test1，初始余额为0\n\n修改peer0的leveldb账本，使得test1的Amount为10\n\n调用链码函数查询peer1的test1余额!\n图片\n接下来测试被篡改节点peer0发起的交易能否修改其他账本的数据\n调用链码paycode函数recharge给账号test1充值20，然后查询各个节点的test1余额；peer0节点毫无悬念的是篡改后的值+20=30，通过查询可以看到peer1节点也是这个值\n\n通过以上测试可以发现，在节点的世界状态被篡改并且背书策略只设置为少量节点背书的话，可以很轻易的修改正常节点的账本。这涉及到Fabric中背书-验证的机制。\n0x03 交易流程当客户端要调用链码testcode，需要向多少个节点请求取决于链码的背书策略，在安装-实例化链码的实例化时指定（在2.x中，链码生命周期有所修改，链码的背书策略需要组织认可）。示例背书策略如下：\n12345678910policy = &#123;    &apos;identities&apos;: [        &#123;&apos;role&apos;: &#123;&apos;name&apos;: &apos;member&apos;, &apos;mspId&apos;: &apos;Org1MSP&apos;&#125;&#125;,    ],    &apos;policy&apos;: &#123;        &apos;1-of&apos;: [            &#123;&apos;signed-by&apos;: 0&#125;        ]    &#125;&#125;\n该背书策略仅需要Org1MSP成员的背书接下来客户端需要向peer0.org1发送背书请求(proposal)，节点peer0.org1接收到请求后会验证交易格式、签名和权限、尚未提交过背书proposal(重放攻击保护)。然后针对peer0.org1当前的世界状态模拟执行交易，产生响应值和读写集。\n客户端收到背书响应和读写集后验证peer的签名，并检查是否满足了背书策略（客户端行为可以自定义，但是交易流程中的验证阶段也会进行检查），然后将其提交给orderer，如果proposal仅是查询账本，那么到这一步后将不会再提交给orderer上链，直接返回peer0.org1的查询结果。\n排序服务中不需要检查任何交易，仅仅是各个排序节点达成共识将交易排好序后打包成块，然后分发给通道内各个组织的(leader)节点，leader节点将块再广播给其他节点验证。\n验证过程中节点验证块内的交易以确保背书策略满足，并确保读集在模拟交易执行时生成以来，读集变量的账本状态没有变化，区块中的交易被标记为有效或无效。然后区块将被写入数据库，并更新状态。\n在0x02测试中，产生这种安全漏洞的原因主要在于背书策略的不完善，容错性很差，在仅有一个恶意节点时就可能产生所有节点账本被修改的后果，Fabric的机制让其安全性依赖于背书策略，包括世界状态和读写集，以及背书和验证过程。\n0x04 Hyperledger Fabric 2.0改进Fabric 2.0引入了去中心化的chaincode生命周期管理， chaincode需要获得一定数量组织成员的批准才能实例化，与1.x中的单个节点就可将chaincode实例化在通道不一样；并且chaincode的默认背书策略是通道中的大多数组织，提高了本文所述数据篡改的利用难度。\n","dateCreated":"2020-12-13T15:55:53+08:00","dateModified":"2020-12-13T16:28:36+08:00","datePublished":"2020-12-13T15:55:53+08:00","description":"","headline":"Hyperledger Fabric世界状态的篡改","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/"},"publisher":{"@type":"Organization","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"url":"https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/","keywords":"blockchain"}</script>
     <meta name="description" content="0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。 实验使用fabric first-network测试环境 本文所有查询与调用合约都使用的SDK 0x02 测试：修改世界状态测试所用链码：fabcar 代码位置">
+<meta name="keywords" content="blockchain">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Hyperledger Fabric世界状态的篡改">
 <meta property="og:url" content="https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/index.html">
@@ -27,7 +28,7 @@
 <meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric06.png">
 <meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric07.png">
 <meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric09.png">
-<meta property="og:updated_time" content="2020-12-13T08:11:17.529Z">
+<meta property="og:updated_time" content="2020-12-13T08:28:36.253Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hyperledger Fabric世界状态的篡改">
 <meta name="twitter:description" content="0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。 实验使用fabric first-network测试环境 本文所有查询与调用合约都使用的SDK 0x02 测试：修改世界状态测试所用链码：fabcar 代码位置">
@@ -68,7 +69,7 @@
     </div>
     
         
-            <a class="header-right-picture " href="#about" aria-label="Abre el enlace: /#about">
+            <a class="header-right-picture " href="#about" aria-label="Open the link: /#about">
         
         
         </a>
@@ -86,41 +87,41 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/" rel="noopener" title="Inicio">
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Home">
                         <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Inicio</span>
+                        <span class="sidebar-button-desc">Home</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categorías">
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categories">
                         <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Categorías</span>
+                        <span class="sidebar-button-desc">Categories</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archivos">
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archives">
                         <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Archivos</span>
+                        <span class="sidebar-button-desc">Archives</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Buscar">
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Search">
                         <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Buscar</span>
+                        <span class="sidebar-button-desc">Search</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/about" rel="noopener" title="Acerca de">
+                        <a class="sidebar-button-link " href="/about" rel="noopener" title="About">
                         <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Acerca de</span>
+                        <span class="sidebar-button-desc">About</span>
                     </a>
             </li>
             
@@ -160,7 +161,7 @@
         <div class="post-meta">
     <time datetime="2020-12-13T15:55:53+08:00">
 	
-		    13 Dec 2020
+		    Dec 13, 2020
     	
     </time>
     
@@ -217,6 +218,13 @@
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/blockchain/">blockchain</a>
+
+            </div>
+        
         
             <div class="post-actions-wrap">
     <nav>
@@ -226,15 +234,15 @@
                     <a class="post-action-btn btn btn--disabled" aria-hidden="true">
                         
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
             </li>
             <li class="post-action">
                 
                     
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/29/flareon5_1/" data-tooltip="2018Flare-On5 Part 1" aria-label="SIGUIENTE: 2018Flare-On5 Part 1">
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/29/flareon5_1/" data-tooltip="2018Flare-On5 Part 1" aria-label="NEXT: 2018Flare-On5 Part 1">
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -242,7 +250,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -250,7 +258,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Facebook" aria-label="Compartir en Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Share on Facebook" aria-label="Share on Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -258,7 +266,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Twitter" aria-label="Compartir en Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Share on Twitter" aria-label="Share on Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -266,7 +274,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Google+" aria-label="Compartir en Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Share on Google+" aria-label="Share on Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -276,7 +284,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -311,15 +319,15 @@
                     <a class="post-action-btn btn btn--disabled" aria-hidden="true">
                         
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
             </li>
             <li class="post-action">
                 
                     
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/29/flareon5_1/" data-tooltip="2018Flare-On5 Part 1" aria-label="SIGUIENTE: 2018Flare-On5 Part 1">
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/29/flareon5_1/" data-tooltip="2018Flare-On5 Part 1" aria-label="NEXT: 2018Flare-On5 Part 1">
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -327,7 +335,7 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -335,7 +343,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Facebook" aria-label="Compartir en Facebook">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Share on Facebook" aria-label="Share on Facebook">
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -343,7 +351,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Twitter" aria-label="Compartir en Twitter">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Share on Twitter" aria-label="Share on Twitter">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -351,7 +359,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Google+" aria-label="Compartir en Google+">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Share on Google+" aria-label="Share on Google+">
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
@@ -361,7 +369,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -379,24 +387,24 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Compartir en Facebook">
-                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Compartir en Facebook</span>
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Share on Facebook">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
                     </a>
                 </li>
             
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Compartir en Twitter">
-                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Compartir en Twitter</span>
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Share on Twitter">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
                     </a>
                 </li>
             
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Compartir en Google+">
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Compartir en Google+</span>
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Share on Google+">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
                     </a>
                 </li>
             
