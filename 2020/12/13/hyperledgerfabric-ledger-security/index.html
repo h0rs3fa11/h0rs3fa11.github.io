@@ -1,197 +1,178 @@
+
 <!DOCTYPE html>
-<html lang="en">
-
-<!-- Head tag -->
-<head><meta name="generator" content="Hexo 3.8.0">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="光暗布满征途，绝处可寻答案">
-    <meta name="keyword" content="">
-    <link rel="shortcut icon" href="/img/ironman-draw.png">
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <title>
-        
-          Hyperledger Fabric世界状态的篡改 - H0rs3fa11&#39;s blog
-        
-    </title>
-
-    <link rel="canonical" href="https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/">
-
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-
-    <!-- Custom CSS --> 
-    <link rel="stylesheet" href="/css/beantech.min.css">
+<html lang="">
     
-    <!-- Pygments Highlight CSS -->
-    <link rel="stylesheet" href="/css/highlight.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="H0rs3fa11&#39;s blog">
+    <title>Hyperledger Fabric世界状态的篡改 - H0rs3fa11&#39;s blog</title>
+    <meta name="author" content="h0rs3fa11">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"articleBody":"0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。\n实验使用fabric first-network测试环境\n本文所有查询与调用合约都使用的SDK\n0x02 测试：修改世界状态测试所用链码：fabcar\n代码位置：https://github.com/hyperledger/fabric-samples/blob/release/chaincode/fabcar/fabcar.go\n测试链码的背书策略都是1-of Org1MSP，即满足Org1的任意节点背书即可\n修改账本节点：peer0.org1.example.com\nleveldb路径为Mountpoint下的ledgersData/stateLeveldb/，然后通过leveldb数据库查询账本数据(leveldb提供了API)\n1CAR0 &#123;&quot;make&quot;:&quot;Toyota&quot;,&quot;model&quot;:&quot;Prius&quot;,&quot;colour&quot;:&quot;blue&quot;,&quot;owner&quot;:&quot;Tomoko&quot;&#125;\n更改CAR0的colour为yellow，更改leveldb数据库时需要关闭当前节点，完毕后再启动\n用API调用链码fabcar的queryCar函数查询peer0的CAR0信息\n\n查询未篡改节点的CAR0信息\n\n在peer0上调用fabcar的changeCarOwner函数，接着查询peer0的CAR0，owner已经修改\n\n再查询peer1的CAR0，可以看到在随着owner更改的同时，colour变为了peer0的篡改数据\n\n使用一个复杂一点的链码，实现了简单的注册、充值和转账\n注册一个新用户test1，初始余额为0\n\n修改peer0的leveldb账本，使得test1的Amount为10\n\n调用链码函数查询peer1的test1余额!\n图片\n接下来测试被篡改节点peer0发起的交易能否修改其他账本的数据\n调用链码paycode函数recharge给账号test1充值20，然后查询各个节点的test1余额；peer0节点毫无悬念的是篡改后的值+20=30，通过查询可以看到peer1节点也是这个值\n\n通过以上测试可以发现，在节点的世界状态被篡改并且背书策略只设置为少量节点背书的话，可以很轻易的修改正常节点的账本。这涉及到Fabric中背书-验证的机制。\n0x03 交易流程当客户端要调用链码testcode，需要向多少个节点请求取决于链码的背书策略，在安装-实例化链码的实例化时指定（在2.x中，链码生命周期有所修改，链码的背书策略需要组织认可）。示例背书策略如下：\n12345678910policy = &#123;    &apos;identities&apos;: [        &#123;&apos;role&apos;: &#123;&apos;name&apos;: &apos;member&apos;, &apos;mspId&apos;: &apos;Org1MSP&apos;&#125;&#125;,    ],    &apos;policy&apos;: &#123;        &apos;1-of&apos;: [            &#123;&apos;signed-by&apos;: 0&#125;        ]    &#125;&#125;\n该背书策略仅需要Org1MSP成员的背书接下来客户端需要向peer0.org1发送背书请求(proposal)，节点peer0.org1接收到请求后会验证交易格式、签名和权限、尚未提交过背书proposal(重放攻击保护)。然后针对peer0.org1当前的世界状态模拟执行交易，产生响应值和读写集。\n客户端收到背书响应和读写集后验证peer的签名，并检查是否满足了背书策略（客户端行为可以自定义，但是交易流程中的验证阶段也会进行检查），然后将其提交给orderer，如果proposal仅是查询账本，那么到这一步后将不会再提交给orderer上链，直接返回peer0.org1的查询结果。\n排序服务中不需要检查任何交易，仅仅是各个排序节点达成共识将交易排好序后打包成块，然后分发给通道内各个组织的(leader)节点，leader节点将块再广播给其他节点验证。\n验证过程中节点验证块内的交易以确保背书策略满足，并确保读集在模拟交易执行时生成以来，读集变量的账本状态没有变化，区块中的交易被标记为有效或无效。然后区块将被写入数据库，并更新状态。\n在0x02测试中，产生这种安全漏洞的原因主要在于背书策略的不完善，容错性很差，在仅有一个恶意节点时就可能产生所有节点账本被修改的后果，Fabric的机制让其安全性依赖于背书策略，包括世界状态和读写集，以及背书和验证过程。\n0x04 Hyperledger Fabric 2.0改进Fabric 2.0引入了去中心化的chaincode生命周期管理， chaincode需要获得一定数量组织成员的批准才能实例化，与1.x中的单个节点就可将chaincode实例化在通道不一样；并且chaincode的默认背书策略是通道中的大多数组织，提高了本文所述数据篡改的利用难度。\n","dateCreated":"2020-12-13T15:55:53+08:00","dateModified":"2020-12-13T16:11:17+08:00","datePublished":"2020-12-13T15:55:53+08:00","description":"","headline":"Hyperledger Fabric世界状态的篡改","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/"},"publisher":{"@type":"Organization","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"url":"https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/"}</script>
+    <meta name="description" content="0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。 实验使用fabric first-network测试环境 本文所有查询与调用合约都使用的SDK 0x02 测试：修改世界状态测试所用链码：fabcar 代码位置">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Hyperledger Fabric世界状态的篡改">
+<meta property="og:url" content="https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/index.html">
+<meta property="og:site_name" content="H0rs3fa11&#39;s blog">
+<meta property="og:description" content="0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。 实验使用fabric first-network测试环境 本文所有查询与调用合约都使用的SDK 0x02 测试：修改世界状态测试所用链码：fabcar 代码位置">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric01.PNG">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric02.PNG">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric03.PNG">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric04.PNG">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric05.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric06.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric07.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/fabric09.png">
+<meta property="og:updated_time" content="2020-12-13T08:11:17.529Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hyperledger Fabric世界状态的篡改">
+<meta name="twitter:description" content="0x01 前言Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。 实验使用fabric first-network测试环境 本文所有查询与调用合约都使用的SDK 0x02 测试：修改世界状态测试所用链码：fabcar 代码位置">
+<meta name="twitter:image" content="https://h0rs3fa11.github.io/image/fabric01.PNG">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-lenymrut8wwix6t2rtc30tapqoi11l3hm7kl7o9qxgucelaaelnvhj8vtktq.min.css">
+    <!--STYLES END-->
+    
 
-    <link rel="stylesheet" href="/css/widget.css">
+    
 
-    <link rel="stylesheet" href="/css/rocket.css">
-
-    <link rel="stylesheet" href="/css/signature.css">
-
-    <link rel="stylesheet" href="/css/toc.css">
-
-    <!-- Custom Fonts -->
-    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
-    <!-- Hux change font-awesome CDN to qiniu -->
-    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
-
-    <!-- Hux Delete, sad but pending in China
-    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
-    css'>
-    -->
-
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- ga & ba script hoook -->
-    <script></script>
+    
+        
+    
 </head>
 
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
 
-<!-- hack iOS CSS :active style -->
-<body ontouchstart="">
-	<!-- Modified by Yu-Hsuan Yen -->
-<!-- Post Header -->
-<style type="text/css">
-    header.intro-header{
-        
-            background-image: url('')
-            /*post*/
-        
-    }
+
     
-</style>
 
-<header class="intro-header">
-    <!-- Signature -->
-    <div id="signature">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                
-                    <div class="post-heading">
-                        <div class="tags">
-                            
-                        </div>
-                        <h1>Hyperledger Fabric世界状态的篡改</h1>
-                        <h2 class="subheading"></h2>
-                        <span class="meta">
-                            Posted by h0rs3fa11 on
-                            2020-12-13
-                        </span>
-                    </div>
-                
-
-
-                </div>
-            </div>
-        </div>
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/" aria-label="">
+            H0rs3fa11&#39;s blog
+        </a>
     </div>
+    
+        
+            <a class="header-right-picture " href="#about" aria-label="Abre el enlace: /#about">
+        
+        
+        </a>
+    
 </header>
 
-	
-    <!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">H0rs3fa11&#39;s blog</a>
-        </div>
+            <!-- Define author's picture -->
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <!-- Known Issue, found by Hux:
-            <nav>'s height woule be hold on by its content.
-            so, when navbar scale out, the <nav> will cover tags.
-            also mask any touch event of tags, unfortunately.
-        -->
-        <div id="huxblog_navbar">
-            <div class="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/">Home</a>
-                    </li>
 
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
                     
-
-                        
-                        <li>
-                            <a href="/about/">About Me</a>
-                        </li>
-                        
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Inicio">
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Inicio</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
                     
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categorías">
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categorías</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
                     
-                </ul>
-            </div>
-        </div>
-        <!-- /.navbar-collapse -->
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archivos">
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archivos</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Buscar">
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Buscar</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/about" rel="noopener" title="Acerca de">
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Acerca de</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/h0rs3fa11" target="_blank" rel="noopener" title="GitHub">
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
     </div>
-    <!-- /.container -->
 </nav>
-<script>
-    // Drop Bootstarp low-performance Navbar
-    // Use customize navbar with high-quality material design animation
-    // in high-perf jank-free CSS3 implementation
-    var $body   = document.body;
-    var $toggle = document.querySelector('.navbar-toggle');
-    var $navbar = document.querySelector('#huxblog_navbar');
-    var $collapse = document.querySelector('.navbar-collapse');
 
-    $toggle.addEventListener('click', handleMagic)
-    function handleMagic(e){
-        if ($navbar.className.indexOf('in') > 0) {
-        // CLOSE
-            $navbar.className = " ";
-            // wait until animation end.
-            setTimeout(function(){
-                // prevent frequently toggle
-                if($navbar.className.indexOf('in') < 0) {
-                    $collapse.style.height = "0px"
-                }
-            },400)
-        }else{
-        // OPEN
-            $collapse.style.height = "auto"
-            $navbar.className += " in";
-        }
-    }
-</script>
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Hyperledger Fabric世界状态的篡改
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-12-13T15:55:53+08:00">
+	
+		    13 Dec 2020
+    	
+    </time>
+    
+</div>
 
+    
+</div>
 
-    <!-- Main Content -->
-    <!-- Modify by Yu-Hsuan Yen -->
-
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-
-            <!-- Post Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                post-container">
-
-                <h3 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h3><p>Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。</p>
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h3 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h3><p>Fabric的账本数据存储分为不可变的历史数据存储，也就是区块链形式，以文件形式保存；另外是可变的世界状态，用nosql存储当前状态的key-value，fabric支持的世界状态存储数据库有LevelDB和CouchDB。</p>
 <p>实验使用fabric first-network测试环境</p>
 <p>本文所有查询与调用合约都使用的SDK</p>
 <h3 id="0x02-测试：修改世界状态"><a href="#0x02-测试：修改世界状态" class="headerlink" title="0x02 测试：修改世界状态"></a>0x02 测试：修改世界状态</h3><p>测试所用链码：fabcar</p>
@@ -200,24 +181,25 @@
 <p>修改账本节点：peer0.org1.example.com</p>
 <p>leveldb路径为Mountpoint下的ledgersData/stateLeveldb/，然后通过leveldb数据库查询账本数据(leveldb提供了API)</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CAR0 &#123;&quot;make&quot;:&quot;Toyota&quot;,&quot;model&quot;:&quot;Prius&quot;,&quot;colour&quot;:&quot;blue&quot;,&quot;owner&quot;:&quot;Tomoko&quot;&#125;</span><br></pre></td></tr></table></figure>
-<p>更改CAR0的colour为yellow，更改leveldb数据库时需要关闭当前节点，完毕后再启动<br><img src="https://uploader.shimo.im/f/Ob0yEFMcHWCQjOne.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p>更改CAR0的colour为yellow，更改leveldb数据库时需要关闭当前节点，完毕后再启动<br><img src="/image/fabric01.PNG" alt="图片"></p>
 <p>用API调用链码fabcar的queryCar函数查询peer0的CAR0信息</p>
-<p><img src="https://uploader.shimo.im/f/oKLd1uerLPXGunQN.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p><img src="/image/fabric02.PNG" alt="图片"></p>
 <p>查询未篡改节点的CAR0信息</p>
-<p><img src="https://uploader.shimo.im/f/kz3WWYHZ2hMnUCgM.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p><img src="/image/fabric03.PNG" alt="图片"></p>
 <p>在peer0上调用fabcar的changeCarOwner函数，接着查询peer0的CAR0，owner已经修改</p>
-<p><img src="https://uploader.shimo.im/f/5lcbDYcainpc2mNW.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p><img src="/image/fabric04.PNG" alt="图片"></p>
 <p>再查询peer1的CAR0，可以看到在随着owner更改的同时，colour变为了peer0的篡改数据</p>
-<p><img src="https://uploader.shimo.im/f/SaK19x0TdIGCGLSI.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p><img src="/image/fabric05.png" alt="图片"></p>
 <p>使用一个复杂一点的链码，实现了简单的注册、充值和转账</p>
 <p>注册一个新用户test1，初始余额为0</p>
-<p><img src="https://uploader.shimo.im/f/07Ygfx2Ti7m6Dlms.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p><img src="/image/fabric06.png" alt="图片"></p>
 <p>修改peer0的leveldb账本，使得test1的Amount为10</p>
-<p><img src="https://uploader.shimo.im/f/Can9taX64L3LEeil.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
-<p>调用链码函数查询peer1的test1余额<img src="https://uploader.shimo.im/f/EpI2nlHP4jovfzCb.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p><img src="/image/fabric07.png" alt="图片"></p>
+<p>调用链码函数查询peer1的test1余额!</p>
+<p><a href="/image/fabric08.png">图片</a></p>
 <p>接下来测试被篡改节点peer0发起的交易能否修改其他账本的数据</p>
 <p>调用链码paycode函数recharge给账号test1充值20，然后查询各个节点的test1余额；peer0节点毫无悬念的是篡改后的值+20=30，通过查询可以看到peer1节点也是这个值</p>
-<p><img src="https://uploader.shimo.im/f/LZNa8HZxO8VAdVq7.png!thumbnail?fileGuid=pTjWrcVxCvH6qRHK" alt="图片"></p>
+<p><img src="/image/fabric09.png" alt="图片"></p>
 <p>通过以上测试可以发现，在节点的世界状态被篡改并且背书策略只设置为少量节点背书的话，可以很轻易的修改正常节点的账本。这涉及到Fabric中背书-验证的机制。</p>
 <h3 id="0x03-交易流程"><a href="#0x03-交易流程" class="headerlink" title="0x03 交易流程"></a>0x03 交易流程</h3><p>当客户端要调用链码testcode，需要向多少个节点请求取决于链码的背书策略，在安装-实例化链码的实例化时指定（在2.x中，链码生命周期有所修改，链码的背书策略需要组织认可）。示例背书策略如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">policy = &#123;</span><br><span class="line">    &apos;identities&apos;: [</span><br><span class="line">        &#123;&apos;role&apos;: &#123;&apos;name&apos;: &apos;member&apos;, &apos;mspId&apos;: &apos;Org1MSP&apos;&#125;&#125;,</span><br><span class="line">    ],</span><br><span class="line">    &apos;policy&apos;: &#123;</span><br><span class="line">        &apos;1-of&apos;: [</span><br><span class="line">            &#123;&apos;signed-by&apos;: 0&#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -228,265 +210,240 @@
 <p>在0x02测试中，产生这种安全漏洞的原因主要在于背书策略的不完善，容错性很差，在仅有一个恶意节点时就可能产生所有节点账本被修改的后果，Fabric的机制让其安全性依赖于背书策略，包括世界状态和读写集，以及背书和验证过程。</p>
 <h3 id="0x04-Hyperledger-Fabric-2-0改进"><a href="#0x04-Hyperledger-Fabric-2-0改进" class="headerlink" title="0x04 Hyperledger Fabric 2.0改进"></a>0x04 Hyperledger Fabric 2.0改进</h3><p>Fabric 2.0引入了去中心化的chaincode生命周期管理， chaincode需要获得一定数量组织成员的批准才能实例化，与1.x中的单个节点就可将chaincode实例化在通道不一样；并且chaincode的默认背书策略是通道中的大多数组织，提高了本文所述数据篡改的利用难度。</p>
 
-                
-
-                <hr>
-                <!-- Pager -->
-                <ul class="pager">
-                    
-                    
-                        <li class="next">
-                            <a href="/2018/10/29/flareon5_1/" data-toggle="tooltip" data-placement="top" title="2018Flare-On5 Part 1">Next Post &rarr;</a>
-                        </li>
-                    
-                </ul>
-
-                <!-- duoshuo Share start -->
-                
-                <!-- 多说 Share end-->
-
-                <!-- 多说评论框 start -->
-                
-                <!-- 多说评论框 end -->
-
-                <!-- disqus comment start -->
-                
-                    <div class="comment">
-                        <div id="disqus_thread" class="disqus-thread"></div>
-                    </div>
-                
-                <!-- disqus comment end -->
-            </div>
             
-            <!-- Tabe of Content -->
-            <!-- Table of Contents -->
 
-                
-            <!-- Sidebar Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
 
-                <!-- Featured Tags -->
-                
-                <section>
-                    <!-- no hr -->
-                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-                    <div class="tags">
-                       
-                    </div>
-                </section>
-                
-
-                <!-- Friends Blog -->
-                
-            </div>
         </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled" aria-hidden="true">
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/29/flareon5_1/" data-tooltip="2018Flare-On5 Part 1" aria-label="SIGUIENTE: 2018Flare-On5 Part 1">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Facebook" aria-label="Compartir en Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Twitter" aria-label="Compartir en Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Google+" aria-label="Compartir en Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
     </div>
 </article>
 
 
 
-
-<!-- disqus embedded js code start (one page only need to embed once) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "your-disqus-ID";
-    var disqus_identifier = "https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/";
-    var disqus_url = "https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/";
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus embedded js code start end -->
-
-
-
-
-<!-- async load function -->
-<script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script>
-    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
-        anchors.options = {
-          visible: 'hover',
-          placement: 'left',
-          icon: 'ℬ'
-        };
-        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
-    })
-</script>
-<style>
-    /* place left on bigger screen */
-    @media all and (min-width: 800px) {
-        .anchorjs-link{
-            position: absolute;
-            left: -0.75em;
-            font-size: 1.1em;
-            margin-top : -0.1em;
-        }
-    }
-</style>
-
-
-
-    <!-- Footer -->
-    <!-- Footer -->
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                
-                
-                
-
-                
-
-                
-
-                
-                    <li>
-                        <a target="_blank" href="https://github.com/h0rs3fa11">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-                
-
-                
-
-                </ul>
-                <p class="copyright text-muted">
-                    Copyright &copy; h0rs3fa11 2020 
-                    <br>
-                    Theme by <a href="http://huangxuan.me">Hux</a> 
-                    <span style="display: inline-block; margin: 0 5px;">
-                        <i class="fa fa-heart"></i>
-                    </span> 
-                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
-                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
-                    </iframe>
-                </p>
-            </div>
-        </div>
-    </div>
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 h0rs3fa11. All Rights Reserved.
+    </span>
 </footer>
 
-<!-- jQuery -->
-<script src="/js/jquery.min.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
-<script src="/js/bootstrap.min.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="/js/hux-blog.min.js"></script>
-
-
-<!-- async load function -->
-<script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-
-<!-- 
-     Because of the native support for backtick-style fenced code blocks 
-     right within the Markdown is landed in Github Pages, 
-     From V1.6, There is no need for Highlight.js, 
-     so Huxblog drops it officially.
-
-     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
-     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
--->
-<!--
-    <script>
-        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
-            hljs.initHighlightingOnLoad();
-        })
-    </script>
-    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
--->
-
-
-<!-- jquery.tagcloud.js -->
-<script>
-    // only load tagcloud.js in tag.html
-    if($('#tag_cloud').length !== 0){
-        async("https://h0rs3fa11.github.io/js/jquery.tagcloud.js",function(){
-            $.fn.tagcloud.defaults = {
-                //size: {start: 1, end: 1, unit: 'em'},
-                color: {start: '#bbbbee', end: '#0085a1'},
-            };
-            $('#tag_cloud a').tagcloud();
-        })
-    }
-</script>
-
-<!--fastClick.js -->
-<script>
-    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
-        var $nav = document.querySelector("nav");
-        if($nav) FastClick.attach($nav);
-    })
-</script>
-
-
-<!-- Google Analytics -->
-
-
-<script>
-    // dynamic User by Hux
-    var _gaId = 'UA-XXXXXXXX-X';
-    var _gaDomain = 'yoursite';
-
-    // Originial
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', _gaId, _gaDomain);
-    ga('send', 'pageview');
-</script>
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled" aria-hidden="true">
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/29/flareon5_1/" data-tooltip="2018Flare-On5 Part 1" aria-label="SIGUIENTE: 2018Flare-On5 Part 1">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Facebook" aria-label="Compartir en Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Twitter" aria-label="Compartir en Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" title="Compartir en Google+" aria-label="Compartir en Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
 
 
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Compartir en Facebook">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Compartir en Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Compartir en Twitter">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Compartir en Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2020/12/13/hyperledgerfabric-ledger-security/" aria-label="Compartir en Google+">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Compartir en Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
 
 
-<!-- Baidu Tongji -->
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">h0rs3fa11</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-xlumxrnrjzzbfjca3ypp7aj0nlwsczvjtptgkhweiricesxapx8i1mnl0k6u.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
 
 
 
 
-
-
-	<a id="rocket" href="#top" class=""></a>
-	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
-    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
-<!-- Image to hack wechat -->
-<img src="https://h0rs3fa11.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work -->
-
-</body>
-
+    </body>
 </html>

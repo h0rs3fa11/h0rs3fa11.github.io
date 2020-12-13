@@ -1,201 +1,177 @@
+
 <!DOCTYPE html>
-<html lang="en">
-
-<!-- Head tag -->
-<head><meta name="generator" content="Hexo 3.8.0">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="光暗布满征途，绝处可寻答案">
-    <meta name="keyword" content="">
-    <link rel="shortcut icon" href="/img/ironman-draw.png">
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <title>
-        
-          2017看雪CTF leifeiCM - H0rs3fa11&#39;s blog
-        
-    </title>
-
-    <link rel="canonical" href="https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/">
-
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-
-    <!-- Custom CSS --> 
-    <link rel="stylesheet" href="/css/beantech.min.css">
+<html lang="">
     
-    <!-- Pygments Highlight CSS -->
-    <link rel="stylesheet" href="/css/highlight.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="H0rs3fa11&#39;s blog">
+    <title>2017看雪CTF leifeiCM - H0rs3fa11&#39;s blog</title>
+    <meta name="author" content="h0rs3fa11">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"articleBody":"这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试\n计算12345678910111213141516170040104E  |.  E8 7D0A0000   call    00401AD0                         ;  input00401053  |.  8D7C24 20     lea     edi, dword ptr [esp+20]00401057  |.  83C9 FF       or      ecx, FFFFFFFF0040105A  |.  33C0          xor     eax, eax0040105C  |.  83C4 18       add     esp, 180040105F  |.  F2:AE         repne   scas byte ptr es:[edi]00401061  |.  F7D1          not     ecx00401063  |.  83C1 FE       add     ecx, -200401066  |.  83F9 08       cmp     ecx, 8                           ;  &gt;=800401069  |.  0F8C 0B020000 jl      0040127A0040106F  |.  83F9 14       cmp     ecx, 14                          ;  &lt;=2000401072  |.  0F8F 02020000 jg      0040127A00401078  |.  33F6          xor     esi, esi0040107A  |.  33D2          xor     edx, edx0040107C  |.  85C9          test    ecx, ecx0040107E  |.  88440C 08     mov     byte ptr [esp+ecx+8], al00401082  |.  7E 28         jle     short 004010AC\n长度在8~20之间1234567891011121300401084  |&gt; /8A4414 08     /mov     al, byte ptr [esp+edx+8]00401088  |. |3C 30         |cmp     al, 300040108A  |. |7E 04         |jle     short 004010900040108C  |. |3C 39         |cmp     al, 390040108E  |. |7E 01         |jle     short 0040109100401090  |&gt; |46            |inc     esi00401091  |&gt; |42            |inc     edx00401092  |. |3BD1          |cmp     edx, ecx00401094  |.^\\7C EE         \\jl      short 0040108400401096  |.  85F6          test    esi, esi00401098  |.  74 12         je      short 004010AC0040109A  |.  68 74904000   push    00409074                         ;  key format error...\\n0040109F  |.  E8 3C0B0000   call    00401BE0\n全是数字，并且不为012004010AC  |&gt; \\8D8C24 0C0100&gt;lea     ecx, dword ptr [esp+10C]004010B3  |.  E8 08020000   call    004012C0                         ;  初始化\n初始化一个对象继续往下，跟进4014E0123456789101112131415161718192021222324004014FF  |. /7E 2E         jle     short 0040152F                   ;  &lt;=00401501  |&gt; |8A042E        /mov     al, byte ptr [esi+ebp]00401504  |. |3C 30         |cmp     al, 3000401506  |. |7C 22         |jl      short 0040152A00401508  |. |3C 39         |cmp     al, 390040150A  |. |7F 1E         |jg      short 0040152A0040150C  |. |0FBEC0        |movsx   eax, al0040150F  |. |83E8 30       |sub     eax, 30                         ;  转十进制00401512  |. |74 16         |je      short 0040152A00401514  |. |85F6          |test    esi, esi00401516  |. |74 0A         |je      short 0040152200401518  |. |8BCE          |mov     ecx, esi0040151A  |&gt; |8D0480        |/lea     eax, dword ptr [eax+eax*4]     ;  eax*100040151D  |. |03C0          ||add     eax, eax0040151F  |. |49            ||dec     ecx00401520  |.^|75 F8         |\\jnz     short 0040151A00401522     |50            push    eax00401523  |. |8BCB          |mov     ecx, ebx00401525  |. |E8 56000000   |call    004015800040152A  |&gt; |46            |inc     esi0040152B  |. |3BF7          |cmp     esi, edi0040152D  |.^|7C D2         \\jl      short 004015010040152F  |&gt; \\8BCB          mov     ecx, ebx00401531  |.  E8 3A040000   call    00401970                         ;  检查位数\n转十进制数运行到call 401730,跟进F8单步走，之前的call就大致浏览一下，运行到call 401540，跟进去看看12345678910111213141516171819202122232425262700401540  /$  56            push    esi00401541  |.  8B7424 08     mov     esi, dword ptr [esp+8]00401545  |.  33D2          xor     edx, edx00401547  |.  8B46 04       mov     eax, dword ptr [esi+4]           ;  读取长度0040154A  |.  85C0          test    eax, eax0040154C  |.  8941 04       mov     dword ptr [ecx+4], eax0040154F  |.  7E 28         jle     short 0040157900401551  |.  53            push    ebx00401552  |.  55            push    ebp00401553  |.  57            push    edi00401554  |.  8BFE          mov     edi, esi00401556  |.  8D81 08100000 lea     eax, dword ptr [ecx+1008]0040155C  |.  2BF9          sub     edi, ecx0040155E  |&gt;  8B1C07        /mov     ebx, dword ptr [edi+eax]00401561  |.  8B28          |mov     ebp, dword ptr [eax]00401563  |.  42            |inc     edx00401564  |.  83C0 04       |add     eax, 400401567 &gt;|.  8B5C9E 08     |mov     ebx, dword ptr [esi+ebx*4+8]    ;  读取数字0040156B &gt;|.  895CA9 08     |mov     dword ptr [ecx+ebp*4+8], ebx0040156F  |.  8B59 04       |mov     ebx, dword ptr [ecx+4]00401572  |.  3BD3          |cmp     edx, ebx00401574  |.^ 7C E8         \\jl      short 0040155E00401576  |.  5F            pop     edi00401577  |.  5D            pop     ebp00401578  |.  5B            pop     ebx00401579  |&gt;  5E            pop     esi0040157A  \\.  C2 0400       retn    4\n这里会读取我们输入的数字，而且通过ida交叉引用可知后面还会调用几次这个读取的过程，于是可以设置一个条件断点记录这里读取的值。在00401567记录在40156B记录然后在retn的地方下个断点，直接运行过去打开Log窗口（之前已经清空）可以看到读取输入数字的过程接下来继续单步运行12345670040179C          |.  E8 9FFDFFFF   |call    00401540                        ;  读取004017A1          |.  57            |push    edi004017A2          |.  8D4C24 14     |lea     ecx, dword ptr [esp+14]004017A6          |.  E8 B5FEFFFF   |call    00401660004017AB          |.  56            |push    esi004017AC          |.  8D4C24 14     |lea     ecx, dword ptr [esp+14]004017B0          |.  E8 2BFFFFFF   |call    004016E0                        ;  乘法 num\n跟进004017B0 call 004016E012345678910004016FF          |&gt; /8B06          /mov     eax, dword ptr [esi]00401701          |. |83C6 04       |add     esi, 400401704          |. |8B5C81 08     |mov     ebx, dword ptr [ecx+eax*4+8]00401708 x        |. |8D4481 08     |lea     eax, dword ptr [ecx+eax*4+8]0040170C y        |. |0FAFDF        |imul    ebx, edi                        ;  9*num0040170F x*y      |. |8918          |mov     dword ptr [eax], ebx00401711          |. |8B41 04       |mov     eax, dword ptr [ecx+4]00401714          |. |42            |inc     edx00401715          |. |3BD0          |cmp     edx, eax00401717          |.^\\7C E6         \\jl      short 004016FF\n这里是一个乘法的实现，并且之后还会调用。这里是之前传入的参数9分别乘上输入的数字，同样设置条件记录一下00401708记录ebx，0040170C记录edi，0040170F记录ebx在0040171B设置断点，运行跳过循环，记录内容如下：1234567891011121314151617181920212223242526272800401708  COND: x = 000000090040170C  COND: y = 000000090040170F  COND: x*y = 0000005100401708  COND: x = 000000080040170C  COND: y = 000000090040170F  COND: x*y = 0000004800401708  COND: x = 000000070040170C  COND: y = 000000090040170F  COND: x*y = 0000003F00401708  COND: x = 000000060040170C  COND: y = 000000090040170F  COND: x*y = 0000003600401708  COND: x = 000000050040170C  COND: y = 000000090040170F  COND: x*y = 0000002D00401708  COND: x = 000000040040170C  COND: y = 000000090040170F  COND: x*y = 0000002400401708  COND: x = 000000030040170C  COND: y = 000000090040170F  COND: x*y = 0000001B00401708  COND: x = 000000020040170C  COND: y = 000000090040170F  COND: x*y = 0000001200401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 000000090040171B  断点位于 2-lelfei.0040171B\n然后进入0040171B的这个call看看12345600401719          |.  5E            pop     esi0040171A          |.  5B            pop     ebx0040171B          |&gt;  E8 50020000   call    00401970                         ;  123...9*9=111....1 完成进位00401720          |.  33C0          xor     eax, eax00401722          |.  5F            pop     edi00401723          |.  C2 0400       retn    4\n进去之后可以看到有一个除法取余的操作，同样可以设置条件断点跟踪一下分别记录eax、edx的值运行过后记录如下1234567891011121314004019BE  COND: eax = 00000051004019C0  COND: eax mod 10 = 00000001004019BE  COND: eax = 00000050004019C0  COND: eax mod 10 = 00000000004019BE  COND: eax = 00000047004019C0  COND: eax mod 10 = 00000001004019BE  COND: eax = 0000003D004019C0  COND: eax mod 10 = 00000001004019BE  COND: eax = 00000033004019C0  COND: eax mod 10 = 00000001004019BE  COND: eax = 00000029004019C0  COND: eax mod 10 = 00000001004019BE  COND: eax = 0000001F004019C0  COND: eax mod 10 = 00000001\n这里得分析一下，刚开始eax=0x51=81，通过之前的记录这个值就是99的值；然后eax=0x50，这个值即为89+8=0x50，加上的这个8就是99的进位，再分析几个就能知道，刚才那个call分别让输入的数字乘9，而这里则完成了进位，实现的就是1234567899的操作。这个call在加法中也会用于进位。\n出来之后下面是12345678910111213141516171819004017C1          |.  E8 1AFEFFFF   |call    004015E0                        ;  +跟进去看一下00401634          |.  8B10          |mov     edx, dword ptr [eax]00401636          |.  8B2C07        |mov     ebp, dword ptr [edi+eax]00401639          |.  8B6CAE 08     |mov     ebp, dword ptr [esi+ebp*4+8]0040163D a        |.  8D5491 08     |lea     edx, dword ptr [ecx+edx*4+8]00401641 b        |.  012A          |add     dword ptr [edx], ebp            ;  加法00401643 edx&gt;400  |&gt;  8B5424 10     |mov     edx, dword ptr [esp+10]00401647          |.  43            |inc     ebx00401648          |.  83C0 04       |add     eax, 40040164B          |.  3BDA          |cmp     ebx, edx0040164D          |.^ 7C BE         \\jl      short 0040160D0040164F          |.  5F            pop     edi00401650          |.  5D            pop     ebp00401651          |&gt;  E8 1A030000   call    0040197000401656          |.  5E            pop     esi00401657          |.  5B            pop     ebx00401658          |.  59            pop     ecx00401659          \\.  C2 0400       retn    4\n这里有一个加法的操作，而且同样后面还会调用（经过跟踪这里暂时不会调用加法），于是还是设置一个条件记录断点分别记录ebp、dword ptr [edx]、条件edx&gt;400的dword ptr [edx]，然后运行到retn此时记录窗口暂时未记下有用的记录然后继续直接运行到retn1234567891011121314151617181920210401567  COND: adress = 0012CDD00040156B  COND: value = 0000000100401567  COND: adress = 0012C9C80040156B  COND: value = 0000000000401567  COND: adress = 0012C5300040156B  COND: value = 0000000100401567  COND: adress = 0012C0B40040156B  COND: value = 0000000100401567  COND: adress = 0012C0440040156B  COND: value = 0000000100401567  COND: adress = 0012C6640040156B  COND: value = 0000000100401567  COND: adress = 0012CB200040156B  COND: value = 0000000100401567  COND: adress = 0012CAB80040156B  COND: value = 0000000100401567  COND: adress = 0012C7640040156B  COND: value = 0000000100401567  COND: adress = 0012CF580040156B  COND: value = 000000010040181E  断点位于 2-lelfei.0040181E\n可见读取了1234567899的结果，然后call 401730就分析完了，作用就是1234567899=111111110112345678910111213141516171819202122232425004010E9          |.  E8 42060000   call    00401730                         ;  123456789*9=1111111101004010EE          |.  8D8C24 0C0100&gt;lea     ecx, dword ptr [esp+10C]004010F5          |.  E8 B6010000   call    004012B0                         ;  nothing004010FA          |&gt;  8D5424 08     /lea     edx, dword ptr [esp+8]004010FE          |.  8D8C24 1C2100&gt;|lea     ecx, dword ptr [esp+211C]00401105          |.  52            |push    edx00401106          |.  E8 45020000   |call    004013500040110B          |.  8D8424 1C2100&gt;|lea     eax, dword ptr [esp+211C]00401112          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]00401119          |.  50            |push    eax0040111A          |.  C68424 384100&gt;|mov     byte ptr [esp+4138], 100401122          |.  E8 19070000   |call    0040184000401127          |.  6A 09         |push    900401129          |.  8D8C24 100100&gt;|lea     ecx, dword ptr [esp+110]00401130          |.  8BF0          |mov     esi, eax00401132          |.  E8 F9050000   |call    0040173000401137          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]0040113E          |.  03F0          |add     esi, eax00401140          |.  E8 6B010000   |call    004012B000401145          |.  85F6          |test    esi, esi00401147          |.  0F85 C8000000 |jnz     004012150040114D          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]00401154          |.  E8 47020000   |call    004013A000401159          |.  25 01000080   |and     eax, 800000010040115E          |.  79 05         |jns     short 00401165\n接下来的几个call可以直接通过记录窗口来分析了，在401147设置断点，运行过来，此时log窗口已经记录了很多，就从开始慢慢分析1234567891011121314151617181920212223242526272829303132333435363738394000401567  COND: adress = 001285140040156B  COND: value = 0000000100401567  COND: adress = 001286AC0040156B  COND: value = 0000000000401567  COND: adress = 001288B80040156B  COND: value = 0000000100401567  COND: adress = 00128DDC0040156B  COND: value = 0000000100401567  COND: adress = 00128D940040156B  COND: value = 0000000100401567  COND: adress = 001286D80040156B  COND: value = 0000000100401567  COND: adress = 0012811C0040156B  COND: value = 0000000100401567  COND: adress = 0012850C0040156B  COND: value = 0000000100401567  COND: adress = 001288B00040156B  COND: value = 0000000100401567  COND: adress = 0012816C0040156B  COND: value = 0000000100401567  COND: adress = 001249480040156B  COND: value = 0000000100401567  COND: adress = 001240180040156B  COND: value = 0000000000401567  COND: adress = 00124D980040156B  COND: value = 0000000100401567  COND: adress = 00123F280040156B  COND: value = 0000000100401567  COND: adress = 001245400040156B  COND: value = 0000000100401567  COND: adress = 001244200040156B  COND: value = 0000000100401567  COND: adress = 00124CBC0040156B  COND: value = 0000000100401567  COND: adress = 001247E80040156B  COND: value = 0000000100401567  COND: adress = 00123F1C0040156B  COND: value = 0000000100401567  COND: adress = 00123DE00040156B  COND: value = 00000001\n这里读取了 1111111101 111111110112345678910111213141516171819202122232425262728293000401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000000040170C  COND: y = 000000090040170F  COND: x*y = 0000000000401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 0000000900401708  COND: x = 000000010040170C  COND: y = 000000090040170F  COND: x*y = 00000009\n这里是1111111101*9=9999999909 (9是个位，即输入的第一位)123456789101112131415161718192000401567  COND: adress = 001285140040156B  COND: value = 0000000900401567  COND: adress = 001286AC0040156B  COND: value = 0000000000401567  COND: adress = 001288B80040156B  COND: value = 0000000900401567  COND: adress = 00128DDC0040156B  COND: value = 0000000900401567  COND: adress = 00128D940040156B  COND: value = 0000000900401567  COND: adress = 001286D80040156B  COND: value = 0000000900401567  COND: adress = 0012811C0040156B  COND: value = 0000000900401567  COND: adress = 0012850C0040156B  COND: value = 0000000900401567  COND: adress = 001288B00040156B  COND: value = 0000000900401567  COND: adress = 0012816C0040156B  COND: value = 00000009\n读取999999990912345678910111213141516171819202122232425262728293031323334353637383940414200401567  COND: adress = 001285140040156B  COND: value = 0000000100401567  COND: adress = 001286AC0040156B  COND: value = 0000000000401567  COND: adress = 001288B80040156B  COND: value = 0000000100401567  COND: adress = 00128DDC0040156B  COND: value = 0000000100401567  COND: adress = 00128D940040156B  COND: value = 0000000100401567  COND: adress = 001286D80040156B  COND: value = 0000000100401567  COND: adress = 0012811C0040156B  COND: value = 0000000100401567  COND: adress = 0012850C0040156B  COND: value = 0000000100401567  COND: adress = 001288B00040156B  COND: value = 0000000100401567  COND: adress = 0012816C0040156B  COND: value = 0000000100401567  COND: adress = 00124C800040156B  COND: value = 0000000000401567  COND: adress = 00123F5C0040156B  COND: value = 0000000100401567  COND: adress = 00124D080040156B  COND: value = 0000000000401567  COND: adress = 00123E700040156B  COND: value = 0000000100401567  COND: adress = 001248580040156B  COND: value = 0000000100401567  COND: adress = 00124BF40040156B  COND: value = 0000000100401567  COND: adress = 001246080040156B  COND: value = 0000000100401567  COND: adress = 0012453C0040156B  COND: value = 0000000100401567  COND: adress = 001241A00040156B  COND: value = 0000000100401567  COND: adress = 0012497C0040156B  COND: value = 0000000100401567  COND: adress = 00123E840040156B  COND: value = 00000001\n读取11111111010 111111110112345678910111213141516171819202122232425262728293031323300401708  COND: x = 000000000040170C  COND: y = 000000080040170F  COND: x*y = 0000000000401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000000040170C  COND: y = 000000080040170F  COND: x*y = 0000000000401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 0000000800401708  COND: x = 000000010040170C  COND: y = 000000080040170F  COND: x*y = 00000008\n11111111010*8=88888888080这里8是输入的第二位\n(省略记录文件)接下来读取888888880801234567891011121314151617181920212223242526272829300040163D  COND: a = 0000000000401641  COND: b = 0000000900401643  COND: a+b = 000000090040163D  COND: a = 0000000800401641  COND: b = 0000000000401643  COND: a+b = 000000080040163D  COND: a = 0000000000401641  COND: b = 0000000900401643  COND: a+b = 000000090040163D  COND: a = 0000000800401641  COND: b = 0000000900401643  COND: a+b = 000000110040163D  COND: a = 0000000800401641  COND: b = 0000000900401643  COND: a+b = 000000110040163D  COND: a = 0000000800401641  COND: b = 0000000900401643  COND: a+b = 000000110040163D  COND: a = 0000000800401641  COND: b = 0000000900401643  COND: a+b = 000000110040163D  COND: a = 0000000800401641  COND: b = 0000000900401643  COND: a+b = 000000110040163D  COND: a = 0000000800401641  COND: b = 0000000900401643  COND: a+b = 000000110040163D  COND: a = 0000000800401641  COND: b = 0000000900401643  COND: a+b = 00000011\n加法出现(省略进位的记录文件)，88888888080+9999999909=9888 8887 989\n然后读取11111111010012345678910111213141516171819202122232425262728293031323334353600401708  COND: x = 000000000040170C  COND: y = 000000070040170F  COND: x*y = 0000000000401708  COND: x = 000000000040170C  COND: y = 000000070040170F  COND: x*y = 0000000000401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000000040170C  COND: y = 000000070040170F  COND: x*y = 0000000000401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 0000000700401708  COND: x = 000000010040170C  COND: y = 000000070040170F  COND: x*y = 00000007\n111111110100*7=7777777707007百位，即是输入的第3位1234567891011121314151617181920212223242526272829303132330040163D  COND: a = 0000000000401641  COND: b = 0000000900401643  COND: a+b = 000000090040163D  COND: a = 0000000000401641  COND: b = 0000000800401643  COND: a+b = 000000080040163D  COND: a = 0000000700401641  COND: b = 0000000900401643  COND: a+b = 000000100040163D  COND: a = 0000000000401641  COND: b = 0000000700401643  COND: a+b = 000000070040163D  COND: a = 0000000700401641  COND: b = 0000000800401643  COND: a+b = 0000000F0040163D  COND: a = 0000000700401641  COND: b = 0000000800401643  COND: a+b = 0000000F0040163D  COND: a = 0000000700401641  COND: b = 0000000800401643  COND: a+b = 0000000F0040163D  COND: a = 0000000700401641  COND: b = 0000000800401643  COND: a+b = 0000000F0040163D  COND: a = 0000000700401641  COND: b = 0000000800401643  COND: a+b = 0000000F0040163D  COND: a = 0000000700401641  COND: b = 0000000800401643  COND: a+b = 0000000F0040163D  COND: a = 0000000700401641  COND: b = 0000000900401643  COND: a+b = 00000010\n9888 8887 989 + 7777 7777 0700 = 8766 6665 8689\n接下来123456789101112131111111101000 * 6 = 6666666606000  6是千位，输入的第4位8766 6665 8689 + 6666666606000 = 7543 3332 6468911111111010000 * 5 = 55555555050000 5是万位，输入的第5位7543 3332 64689 + 55555555050000 = 63098888314689111111110100000 * 4 = 444444440400000  4是输入的第6位63098888314689 + 444444440400000 = 5075433287146891111111101000000 * 3 = 3333333303000000  3是输入的第7位507543328714689 + 3333333303000000 = 384087663171468911111111010000000*2 = 222222220200000003840876631714689 + 22222222020000000 = 26063098651714689111111110100000000*1=11111111010000000026063098651714689 + 111111110100000000 = 137174208751714689137174208751714689 * 9 = 1234567878765432201\n算到这里过后，接下来就是关键的比较了\n比较1234567800401154          |.  E8 47020000   |call    004013A0                        ;  获取计算后的长度00401159          |.  25 01000080   |and     eax, 800000010040115E          |.  79 05         |jns     short 0040116500401160          |.  48            |dec     eax00401161          |.  83C8 FE       |or      eax, FFFFFFFE00401164          |.  40            |inc     eax00401165          |&gt;  83F8 01       |cmp     eax, 100401168          |.  0F85 A7000000 |jnz     00401215\nCall 004013A0由返回值eax=0x13可以知道，这里是获取计算后的长度，是0x13=19长度和0x80000001做按位与，之后把返回值与1比较，不想等就跳转，这里不能跳转。0x80000001按位与结果要为1，说明最低位也是1，即为奇数。1234560040116E          |.  8D8C24 0C0100&gt;|lea     ecx, dword ptr [esp+10C]00401175          |.  E8 26020000   |call    004013A0                        ;  获取计算后长度0040117A          |.  D1F8          |sar     eax, 10040117C          |.  50            |push    eax0040117D          |.  8D8C24 100100&gt;|lea     ecx, dword ptr [esp+110]00401184          |.  E8 27020000   |call    004013B0                        ;  结果19位，取第19/2位\nCall 004013A0是获取计算后的长度，然后除以2，这里长度是19，19/2=9.Call 004013B0是获取计算后的第9位，下标从0开始，这里获取到8123456700401189          |.  6A 00         |push    00040118B          |.  8D8C24 202100&gt;|lea     ecx, dword ptr [esp+2120]00401192          |.  8BF8          |mov     edi, eax00401194          |.  E8 17020000   |call    004013B0                        ;  获取用户输入的第一位（9）00401199          |.  3BF8          |cmp     edi, eax                        ;  比较0040119B          |.  8D8C24 1C2100&gt;|lea     ecx, dword ptr [esp+211C]004011A2          |.  75 78         |jnz     short 0040121C\n上面就是计算后的第9位和输入的第一位比较。这里先修改一下jnz跳转，继续看下面的比较12345678910111213141516171819202122232425262728293031004011A4          |.  6A 00         |push    0004011A6          |.  E8 F5010000   |call    004013A0                             ;  用户输入的长度004011AB          |.  48            |dec     eax004011AC          |.  8D8C24 202100&gt;|lea     ecx, dword ptr [esp+2120]004011B3          |.  50            |push    eax004011B4          |.  6A 01         |push    1004011B6          |.  E8 E5010000   |call    004013A0                             ;  同上004011BB          |.  BE 01000000   |mov     esi, 1004011C0          |.  8D8C24 180100&gt;|lea     ecx, dword ptr [esp+118]004011C7          |.  2BF0          |sub     esi, eax004011C9          |.  E8 D2010000   |call    004013A0                             ;  计算后的长度004011CE          |.  03F0          |add     esi, eax004011D0          |.  8D8C24 282100&gt;|lea     ecx, dword ptr [esp+2128]004011D7          |.  56            |push    esi004011D8          |.  51            |push    ecx004011D9          |.  8D8C24 200100&gt;|lea     ecx, dword ptr [esp+120]004011E0          |.  E8 FB010000   |call    004013E0                             ;  比较004011E5          |.  6A 01         |push    1004011E7          |.  8D8C24 202100&gt;|lea     ecx, dword ptr [esp+2120]004011EE          |.  8BF0          |mov     esi, eax004011F0          |.  E8 AB010000   |call    004013A0004011F5          |.  48            |dec     eax004011F6          |.  8D9424 202100&gt;|lea     edx, dword ptr [esp+2120]004011FD          |.  50            |push    eax004011FE          |.  6A 01         |push    100401200          |.  6A 00         |push    000401202          |.  52            |push    edx00401203          |.  8D8C24 200100&gt;|lea     ecx, dword ptr [esp+120]0040120A          |.  E8 D1010000   |call    004013E0                             ;  比较0040120F          |.  03F0          |add     esi, eax00401211          |.  74 44         |je      short 00401257                       ;  关键跳转\nCall 4013e0是比较的关键代码，调用了两次，同样可以记录一下每次比较的值，结果如下12345678910111213141516170040145E  COND: a = 0000000800401462  COND: b = 000000080040145E  COND: a = 0000000700401462  COND: b = 000000070040145E  COND: a = 0000000600401462  COND: b = 000000060040145E  COND: a = 0000000500401462  COND: b = 000000050040145E  COND: a = 0000000400401462  COND: b = 000000040040145E  COND: a = 0000000300401462  COND: b = 000000030040145E  COND: a = 0000000200401462  COND: b = 000000020040145E  COND: a = 0000000100401462  COND: b = 000000010040145E  COND: a = 00000001\n输入的2~9位与计算后的8~1位逐位比较123456789101112131415160040145E  COND: a = 0000000100401462  COND: b = 000000010040145E  COND: a = 0000000000401462  COND: b = 000000020040145E  COND: a = 0000000200401462  COND: b = 000000030040145E  COND: a = 0000000200401462  COND: b = 000000040040145E  COND: a = 0000000300401462  COND: b = 000000050040145E  COND: a = 0000000400401462  COND: b = 000000060040145E  COND: a = 0000000500401462  COND: b = 000000070040145E  COND: a = 0000000600401462  COND: b = 00000008\n输入的第2~9位和计算后的12~19位逐位比较\n算法总结：输入：987654321-&gt;123456789运算后：12345678 787 65432201中间位等于输入的第一位输入的第2~9位与计算后8~1比较输入的第2~9位与计算后的12~19位比较\n算法逆向输入是8~20位，从8位开始穷举结果是97654321\n参考文章链接\n","dateCreated":"2017-06-10T22:16:01+08:00","dateModified":"2019-03-03T20:21:22+08:00","datePublished":"2017-06-10T22:16:01+08:00","description":"这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试","headline":"2017看雪CTF leifeiCM","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/"},"publisher":{"@type":"Organization","name":"h0rs3fa11","sameAs":["https://github.com/h0rs3fa11"]},"url":"https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/","keywords":"reverse, ctf"}</script>
+    <meta name="description" content="这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试">
+<meta name="keywords" content="reverse,ctf">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="2017看雪CTF leifeiCM">
+<meta property="og:url" content="https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/index.html">
+<meta property="og:site_name" content="H0rs3fa11&#39;s blog">
+<meta property="og:description" content="这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/leifeicm1.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/leifeicm2.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/leifeicm3.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/leifeicm4.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/leifeicm5.png">
+<meta property="og:image" content="https://h0rs3fa11.github.io/image/leifeicm6.png">
+<meta property="og:updated_time" content="2019-03-03T12:21:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2017看雪CTF leifeiCM">
+<meta name="twitter:description" content="这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试">
+<meta name="twitter:image" content="https://h0rs3fa11.github.io/image/leifeicm1.png">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-lenymrut8wwix6t2rtc30tapqoi11l3hm7kl7o9qxgucelaaelnvhj8vtktq.min.css">
+    <!--STYLES END-->
+    
 
-    <link rel="stylesheet" href="/css/widget.css">
+    
 
-    <link rel="stylesheet" href="/css/rocket.css">
-
-    <link rel="stylesheet" href="/css/signature.css">
-
-    <link rel="stylesheet" href="/css/toc.css">
-
-    <!-- Custom Fonts -->
-    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
-    <!-- Hux change font-awesome CDN to qiniu -->
-    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
-
-    <!-- Hux Delete, sad but pending in China
-    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
-    css'>
-    -->
-
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- ga & ba script hoook -->
-    <script></script>
+    
+        
+    
 </head>
 
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
 
-<!-- hack iOS CSS :active style -->
-<body ontouchstart="">
-	<!-- Modified by Yu-Hsuan Yen -->
-<!-- Post Header -->
-<style type="text/css">
-    header.intro-header{
-        
-            background-image: url('')
-            /*post*/
-        
-    }
+
     
-</style>
 
-<header class="intro-header">
-    <!-- Signature -->
-    <div id="signature">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                
-                    <div class="post-heading">
-                        <div class="tags">
-                            
-                              <a class="tag" href="/tags/#reverse" title="reverse">reverse</a>
-                            
-                              <a class="tag" href="/tags/#ctf" title="ctf">ctf</a>
-                            
-                        </div>
-                        <h1>2017看雪CTF leifeiCM</h1>
-                        <h2 class="subheading"></h2>
-                        <span class="meta">
-                            Posted by h0rs3fa11 on
-                            2017-06-10
-                        </span>
-                    </div>
-                
-
-
-                </div>
-            </div>
-        </div>
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/" aria-label="">
+            H0rs3fa11&#39;s blog
+        </a>
     </div>
+    
+        
+            <a class="header-right-picture " href="#about" aria-label="Abre el enlace: /#about">
+        
+        
+        </a>
+    
 </header>
 
-	
-    <!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">H0rs3fa11&#39;s blog</a>
-        </div>
+            <!-- Define author's picture -->
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <!-- Known Issue, found by Hux:
-            <nav>'s height woule be hold on by its content.
-            so, when navbar scale out, the <nav> will cover tags.
-            also mask any touch event of tags, unfortunately.
-        -->
-        <div id="huxblog_navbar">
-            <div class="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/">Home</a>
-                    </li>
 
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
                     
-
-                        
-                        <li>
-                            <a href="/about/">About Me</a>
-                        </li>
-                        
+                        <a class="sidebar-button-link " href="/" rel="noopener" title="Inicio">
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Inicio</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
                     
+                        <a class="sidebar-button-link " href="/all-categories" rel="noopener" title="Categorías">
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categorías</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
                     
-                </ul>
-            </div>
-        </div>
-        <!-- /.navbar-collapse -->
+                        <a class="sidebar-button-link " href="/all-archives" rel="noopener" title="Archivos">
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archivos</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" rel="noopener" title="Buscar">
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Buscar</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/about" rel="noopener" title="Acerca de">
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Acerca de</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/h0rs3fa11" target="_blank" rel="noopener" title="GitHub">
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
     </div>
-    <!-- /.container -->
 </nav>
-<script>
-    // Drop Bootstarp low-performance Navbar
-    // Use customize navbar with high-quality material design animation
-    // in high-perf jank-free CSS3 implementation
-    var $body   = document.body;
-    var $toggle = document.querySelector('.navbar-toggle');
-    var $navbar = document.querySelector('#huxblog_navbar');
-    var $collapse = document.querySelector('.navbar-collapse');
 
-    $toggle.addEventListener('click', handleMagic)
-    function handleMagic(e){
-        if ($navbar.className.indexOf('in') > 0) {
-        // CLOSE
-            $navbar.className = " ";
-            // wait until animation end.
-            setTimeout(function(){
-                // prevent frequently toggle
-                if($navbar.className.indexOf('in') < 0) {
-                    $collapse.style.height = "0px"
-                }
-            },400)
-        }else{
-        // OPEN
-            $collapse.style.height = "auto"
-            $navbar.className += " in";
-        }
-    }
-</script>
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            2017看雪CTF leifeiCM
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-06-10T22:16:01+08:00">
+	
+		    10 Jun 2017
+    	
+    </time>
+    
+</div>
 
+    
+</div>
 
-    <!-- Main Content -->
-    <!-- Modify by Yu-Hsuan Yen -->
-
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-
-            <!-- Post Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                post-container">
-
-                <p>这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试<br><a id="more"></a></p>
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>这个CM无壳，就是算法比较绕人，用OD载入之后输入987654321测试<br><a id="more"></a></p>
 <h2 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">0040104E  |.  E8 7D0A0000   call    00401AD0                         ;  input</span><br><span class="line">00401053  |.  8D7C24 20     lea     edi, dword ptr [esp+20]</span><br><span class="line">00401057  |.  83C9 FF       or      ecx, FFFFFFFF</span><br><span class="line">0040105A  |.  33C0          xor     eax, eax</span><br><span class="line">0040105C  |.  83C4 18       add     esp, 18</span><br><span class="line">0040105F  |.  F2:AE         repne   scas byte ptr es:[edi]</span><br><span class="line">00401061  |.  F7D1          not     ecx</span><br><span class="line">00401063  |.  83C1 FE       add     ecx, -2</span><br><span class="line">00401066  |.  83F9 08       cmp     ecx, 8                           ;  &gt;=8</span><br><span class="line">00401069  |.  0F8C 0B020000 jl      0040127A</span><br><span class="line">0040106F  |.  83F9 14       cmp     ecx, 14                          ;  &lt;=20</span><br><span class="line">00401072  |.  0F8F 02020000 jg      0040127A</span><br><span class="line">00401078  |.  33F6          xor     esi, esi</span><br><span class="line">0040107A  |.  33D2          xor     edx, edx</span><br><span class="line">0040107C  |.  85C9          test    ecx, ecx</span><br><span class="line">0040107E  |.  88440C 08     mov     byte ptr [esp+ecx+8], al</span><br><span class="line">00401082  |.  7E 28         jle     short 004010AC</span><br></pre></td></tr></table></figure>
 <p>长度在8~20之间<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">00401084  |&gt; /8A4414 08     /mov     al, byte ptr [esp+edx+8]</span><br><span class="line">00401088  |. |3C 30         |cmp     al, 30</span><br><span class="line">0040108A  |. |7E 04         |jle     short 00401090</span><br><span class="line">0040108C  |. |3C 39         |cmp     al, 39</span><br><span class="line">0040108E  |. |7E 01         |jle     short 00401091</span><br><span class="line">00401090  |&gt; |46            |inc     esi</span><br><span class="line">00401091  |&gt; |42            |inc     edx</span><br><span class="line">00401092  |. |3BD1          |cmp     edx, ecx</span><br><span class="line">00401094  |.^\7C EE         \jl      short 00401084</span><br><span class="line">00401096  |.  85F6          test    esi, esi</span><br><span class="line">00401098  |.  74 12         je      short 004010AC</span><br><span class="line">0040109A  |.  68 74904000   push    00409074                         ;  key format error...\n</span><br><span class="line">0040109F  |.  E8 3C0B0000   call    00401BE0</span><br></pre></td></tr></table></figure></p>
 <p>全是数字，并且不为0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">004010AC  |&gt; \8D8C24 0C0100&gt;lea     ecx, dword ptr [esp+10C]</span><br><span class="line">004010B3  |.  E8 08020000   call    004012C0                         ;  初始化</span><br></pre></td></tr></table></figure></p>
@@ -234,273 +210,249 @@
 <h2 id="算法逆向"><a href="#算法逆向" class="headerlink" title="算法逆向"></a>算法逆向</h2><p>输入是8~20位，从8位开始穷举<br>结果是97654321</p>
 <h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="http://bbs.pediy.com/thread-218181.htm" target="_blank" rel="noopener">链接</a></p>
 
-                
-
-                <hr>
-                <!-- Pager -->
-                <ul class="pager">
-                    
-                        <li class="previous">
-                            <a href="/2018/10/20/hawkeye-vbinject/" data-toggle="tooltip" data-placement="top" title="负载恶意软件Hawkeye的VB Inject样本分析">&larr; Previous Post</a>
-                        </li>
-                    
-                    
-                        <li class="next">
-                            <a href="/2017/05/25/2017-iscc-reverse/" data-toggle="tooltip" data-placement="top" title="2017 ISCC Reverse Writeup">Next Post &rarr;</a>
-                        </li>
-                    
-                </ul>
-
-                <!-- duoshuo Share start -->
-                
-                <!-- 多说 Share end-->
-
-                <!-- 多说评论框 start -->
-                
-                <!-- 多说评论框 end -->
-
-                <!-- disqus comment start -->
-                
-                    <div class="comment">
-                        <div id="disqus_thread" class="disqus-thread"></div>
-                    </div>
-                
-                <!-- disqus comment end -->
-            </div>
             
-            <!-- Tabe of Content -->
-            <!-- Table of Contents -->
 
-                
-            <!-- Sidebar Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
 
-                <!-- Featured Tags -->
-                
-                <section>
-                    <!-- no hr -->
-                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-                    <div class="tags">
-                       
-                          <a class="tag" href="/tags/#reverse" title="reverse">reverse</a>
-                        
-                          <a class="tag" href="/tags/#ctf" title="ctf">ctf</a>
-                        
-                    </div>
-                </section>
-                
-
-                <!-- Friends Blog -->
-                
-            </div>
         </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">ETIQUETADO EN</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/ctf/">ctf</a> <a class="tag tag--primary tag--small t-link" href="/tags/reverse/">reverse</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/20/hawkeye-vbinject/" data-tooltip="负载恶意软件Hawkeye的VB Inject样本分析" aria-label="ANTERIOR: 负载恶意软件Hawkeye的VB Inject样本分析">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/25/2017-iscc-reverse/" data-tooltip="2017 ISCC Reverse Writeup" aria-label="SIGUIENTE: 2017 ISCC Reverse Writeup">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" title="Compartir en Facebook" aria-label="Compartir en Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" title="Compartir en Twitter" aria-label="Compartir en Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" title="Compartir en Google+" aria-label="Compartir en Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
     </div>
 </article>
 
 
 
-
-<!-- disqus embedded js code start (one page only need to embed once) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "your-disqus-ID";
-    var disqus_identifier = "https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/";
-    var disqus_url = "https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/";
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus embedded js code start end -->
-
-
-
-
-<!-- async load function -->
-<script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script>
-    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
-        anchors.options = {
-          visible: 'hover',
-          placement: 'left',
-          icon: 'ℬ'
-        };
-        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
-    })
-</script>
-<style>
-    /* place left on bigger screen */
-    @media all and (min-width: 800px) {
-        .anchorjs-link{
-            position: absolute;
-            left: -0.75em;
-            font-size: 1.1em;
-            margin-top : -0.1em;
-        }
-    }
-</style>
-
-
-
-    <!-- Footer -->
-    <!-- Footer -->
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                
-                
-                
-
-                
-
-                
-
-                
-                    <li>
-                        <a target="_blank" href="https://github.com/h0rs3fa11">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-                
-
-                
-
-                </ul>
-                <p class="copyright text-muted">
-                    Copyright &copy; h0rs3fa11 2020 
-                    <br>
-                    Theme by <a href="http://huangxuan.me">Hux</a> 
-                    <span style="display: inline-block; margin: 0 5px;">
-                        <i class="fa fa-heart"></i>
-                    </span> 
-                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
-                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
-                    </iframe>
-                </p>
-            </div>
-        </div>
-    </div>
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 h0rs3fa11. All Rights Reserved.
+    </span>
 </footer>
 
-<!-- jQuery -->
-<script src="/js/jquery.min.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
-<script src="/js/bootstrap.min.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="/js/hux-blog.min.js"></script>
-
-
-<!-- async load function -->
-<script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-
-<!-- 
-     Because of the native support for backtick-style fenced code blocks 
-     right within the Markdown is landed in Github Pages, 
-     From V1.6, There is no need for Highlight.js, 
-     so Huxblog drops it officially.
-
-     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
-     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
--->
-<!--
-    <script>
-        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
-            hljs.initHighlightingOnLoad();
-        })
-    </script>
-    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
--->
-
-
-<!-- jquery.tagcloud.js -->
-<script>
-    // only load tagcloud.js in tag.html
-    if($('#tag_cloud').length !== 0){
-        async("https://h0rs3fa11.github.io/js/jquery.tagcloud.js",function(){
-            $.fn.tagcloud.defaults = {
-                //size: {start: 1, end: 1, unit: 'em'},
-                color: {start: '#bbbbee', end: '#0085a1'},
-            };
-            $('#tag_cloud a').tagcloud();
-        })
-    }
-</script>
-
-<!--fastClick.js -->
-<script>
-    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
-        var $nav = document.querySelector("nav");
-        if($nav) FastClick.attach($nav);
-    })
-</script>
-
-
-<!-- Google Analytics -->
-
-
-<script>
-    // dynamic User by Hux
-    var _gaId = 'UA-XXXXXXXX-X';
-    var _gaDomain = 'yoursite';
-
-    // Originial
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', _gaId, _gaDomain);
-    ga('send', 'pageview');
-</script>
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/10/20/hawkeye-vbinject/" data-tooltip="负载恶意软件Hawkeye的VB Inject样本分析" aria-label="ANTERIOR: 负载恶意软件Hawkeye的VB Inject样本分析">
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/25/2017-iscc-reverse/" data-tooltip="2017 ISCC Reverse Writeup" aria-label="SIGUIENTE: 2017 ISCC Reverse Writeup">
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Diesen Beitrag teilen">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" title="Compartir en Facebook" aria-label="Compartir en Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" title="Compartir en Twitter" aria-label="Compartir en Twitter">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" title="Compartir en Google+" aria-label="Compartir en Google+">
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
 
 
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" aria-label="Compartir en Facebook">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Compartir en Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" aria-label="Compartir en Twitter">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Compartir en Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://h0rs3fa11.github.io/2017/06/10/2017-pediy-ctf-2/" aria-label="Compartir en Google+">
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Compartir en Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
 
 
-<!-- Baidu Tongji -->
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">h0rs3fa11</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-xlumxrnrjzzbfjca3ypp7aj0nlwsczvjtptgkhweiricesxapx8i1mnl0k6u.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
 
 
 
 
-
-
-	<a id="rocket" href="#top" class=""></a>
-	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
-    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
-<!-- Image to hack wechat -->
-<img src="https://h0rs3fa11.github.io/img/icon_wechat.png" width="0" height="0" />
-<!-- Migrate from head to bottom, no longer block render and still work -->
-
-</body>
-
+    </body>
 </html>
