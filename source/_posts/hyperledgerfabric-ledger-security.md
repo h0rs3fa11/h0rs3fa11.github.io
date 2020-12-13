@@ -1,7 +1,7 @@
 ---
 title: Hyperledger Fabric世界状态的篡改
 date: 2020-12-13 15:55:53
-tags:
+tags: [blockchain]
 ---
 ### 0x01 前言
 
